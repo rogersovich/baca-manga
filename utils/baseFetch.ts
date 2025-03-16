@@ -1,3 +1,5 @@
+const cache = new Map<string, { data: any; timestamp: number }>();
+
 export async function BaseFetch<T>(
   url: string,
   cacheKey: string,
@@ -5,19 +7,17 @@ export async function BaseFetch<T>(
 ): Promise<T | null> {
   try {
     const cacheDuration = cacheDurationSeconds * 1000; // Convert seconds to milliseconds
+    const now = Date.now();
 
-    // Check if data exists in localStorage
-    const cachedData = localStorage.getItem(cacheKey);
-    if (cachedData) {
-      const parsedCache = JSON.parse(cachedData);
-      const now = new Date().getTime();
-
-      // Validate cache expiration
-      if (now - parsedCache.timestamp < cacheDuration) {
-        // console.log(`[Cache] Loaded from localStorage: ${cacheKey}`);
-        return parsedCache.data as T;
+    // Check if data exists in memory cache
+    if (cache.has(cacheKey)) {
+      const cachedData = cache.get(cacheKey);
+      if (cachedData && now - cachedData.timestamp < cacheDuration) {
+        // console.log(`[Cache] Loaded from memory: ${cacheKey}`);
+        return cachedData.data as T;
       } else {
         // console.log(`[Cache] Expired, fetching new data: ${cacheKey}`);
+        cache.delete(cacheKey); // Remove expired data
       }
     }
 
@@ -27,11 +27,8 @@ export async function BaseFetch<T>(
 
     const data = await response.json();
 
-    // Store data in localStorage with timestamp
-    localStorage.setItem(
-      cacheKey,
-      JSON.stringify({ data, timestamp: new Date().getTime() })
-    );
+    // Store data in memory cache with timestamp
+    cache.set(cacheKey, { data, timestamp: now });
 
     return data as T;
   } catch (error) {

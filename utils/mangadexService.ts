@@ -22,7 +22,7 @@ export default {
     const queryString = buildQueryString(params);
     const url = `${BASE_URL}/manga${queryString}`;
 
-    const cacheKey = `mangaCache_${queryString}`;
+    const cacheKey = `lisst_mangas_cache_${queryString}`;
 
     const data = await BaseFetch<MangaResponse>(url, cacheKey, 60); // Cache for 1 minute
 
