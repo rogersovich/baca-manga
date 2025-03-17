@@ -1,24 +1,35 @@
 <template>
   <div
-    class="w-full bg-gray-950 border border-gray-50/10 rounded-md grid grid-cols-13 gap-4 cursor-pointer group"
-    :style="{
-      transform: hoverState ? 'translateX(10px)' : 'none',
-      transition: 'transform 0.2s ease',
+    class="w-full bg-gray-950 rounded-md grid grid-cols-12 gap-2 cursor-pointer px-2 py-2"
+    :class="{
+      'border border-blue-500': index == selectedIndex || hoverState,
     }"
     @mouseenter="setHover(true)"
     @mouseleave="setHover(false)"
   >
-    <div class="col-span-3 relative">
+    <div
+      class="col-span-2 relative"
+      :style="{
+        transform: hoverState ? 'translateX(5px)' : 'none',
+        transition: 'transform 0.2s ease',
+      }"
+    >
       <img
         :src="getFullImageUrl(manga)"
-        class="rounded-md w-full h-[100px] xl:h-[125px] 2xl:h-[150px] object-cover"
+        class="rounded w-full h-[60px] object-cover"
         @error="handleImageError"
       />
       <div v-if="hoverState" class="container-eye-card">
-        <IconEye class="w-8 h-8 text-white" />
+        <IconEye class="w-5 h-5 text-white" />
       </div>
     </div>
-    <div class="col-span-10">
+    <div
+      class="col-span-10"
+      :style="{
+        transform: hoverState ? 'translateX(5px)' : 'none',
+        transition: 'transform 0.2s ease',
+      }"
+    >
       <div class="flex items-center gap-2 w-full mt-3 px-1">
         <div>
           <div
@@ -39,17 +50,14 @@
           {{ manga.attributes.title.en }}
         </div>
       </div>
-      <div
-        v-if="manga.attributes.description?.en"
-        class="text-[12px] text-gray-50/50 line-clamp-2 mt-2"
-      >
-        {{ manga.attributes.description?.en }}
-      </div>
       <div class="flex items-center gap-2 mt-2">
         <div class="text-[10px] rounded bg-gray-900 px-1 py-0.5 text-white/50">
           Manga
         </div>
-        <div class="text-[10px] rounded bg-gray-900 px-1 py-0.5 text-white/50">
+        <div
+          v-if="manga.attributes.year"
+          class="text-[10px] rounded bg-gray-900 px-1 py-0.5 text-white/50"
+        >
           {{ manga.attributes.year }}
         </div>
         <div
@@ -73,6 +81,8 @@ import { handleImageError } from "~/utils/fallbackImage";
 const props = defineProps<{
   manga: MangaData;
   statistic: any;
+  index: any;
+  selectedIndex: any;
 }>();
 
 const baseUrlImage = ref("https://mangadex.org/covers");
