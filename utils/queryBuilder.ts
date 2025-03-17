@@ -1,4 +1,5 @@
 import type {
+  FilterMangaDetailResponse,
   FilterMangaResponse,
   FilterMangaStatisticsResponse,
 } from "./../types/manga";
@@ -63,6 +64,27 @@ export function buildQueryStringStatistic(
   if (params.manga) {
     queryString +=
       params.manga.map((item) => `manga[]=${item}`).join("&") + "&";
+  }
+
+  // Remove trailing "&" if exists
+  return queryString.endsWith("&") ? queryString.slice(0, -1) : queryString;
+}
+
+export function buildQueryStringDetail(
+  params: FilterMangaDetailResponse
+): string {
+  if (!params) return "";
+
+  let queryString = "?";
+  if (params.includes) {
+    queryString +=
+      params.includes.map((include) => `includes[]=${include}`).join("&") + "&";
+  }
+  if (params.contentRating) {
+    queryString +=
+      params.contentRating
+        .map((rating) => `contentRating[]=${rating}`)
+        .join("&") + "&";
   }
 
   // Remove trailing "&" if exists

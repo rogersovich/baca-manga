@@ -5,7 +5,7 @@ import type { MangaData, FilterMangaResponse } from "@/types/manga";
 
 export function useManga(params: FilterMangaResponse) {
   const mangaList: Ref<MangaData[]> = ref([]);
-  const total = ref(0);
+  const total = ref<any>(0);
   const loading: Ref<boolean> = ref(false);
   const error: Ref<string | null> = ref(null);
 

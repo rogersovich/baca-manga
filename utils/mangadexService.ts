@@ -6,6 +6,8 @@ import type {
   FilterMangaResponse,
   BaseResponseData,
   FilterMangaStatisticsResponse,
+  MangaDetailResponse,
+  FilterMangaDetailResponse,
 } from "@/types/manga";
 import {
   buildQueryString,
@@ -35,17 +37,23 @@ export default {
     return data ? response : null;
   },
 
-  async fetchMangaDetails(mangaId: string): Promise<MangaData | null> {
-    try {
-      const response = await fetch(`${BASE_URL}/manga/${mangaId}`);
-      if (!response.ok) throw new Error("Failed to fetch manga details");
+  async fetchMangaDetails(
+    mangaId: string,
+    params: FilterMangaDetailResponse
+  ): Promise<BaseResponseData<MangaData> | null> {
+    const queryString = buildQueryStringDetail(params);
+    const url = `${BASE_URL}/manga/${mangaId}${queryString}`;
 
-      const data = await response.json();
-      return data.data;
-    } catch (error) {
-      console.error("Error fetching manga details:", error);
-      return null;
-    }
+    const cacheKey = `manga_cache_${url}`;
+
+    const data = await BaseFetch<MangaDetailResponse>(url, cacheKey, 60); // Cache for 1 minute
+
+    const response = {
+      data: data?.data || null,
+      status: "ok",
+    } as BaseResponseData<MangaData>;
+
+    return data ? response : null;
   },
 
   async fetchMangaChapters(mangaId: string): Promise<ChapterData[] | null> {

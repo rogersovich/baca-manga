@@ -2,7 +2,13 @@
   <header
     class="flex items-center z-50 justify-between px-8 py-4 bg-gray-950 border-b border-gray-50/10 text-white w-full fixed"
   >
-    <div class="logo">Logo</div>
+    <div class="logo">
+      <img
+        src="/images/logo.png"
+        class="h-10 w-10 cursor-pointer"
+        @click="goHome"
+      />
+    </div>
     <div class="flex items-center gap-2">
       <div class="relative w-full max-w-sm items-center group">
         <Input
@@ -260,4 +266,8 @@ useEventListener("keydown", (event) => {
     handleEnter();
   }
 });
+
+const goHome = () => {
+  navigateTo("/");
+};
 </script>

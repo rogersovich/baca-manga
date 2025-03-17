@@ -6,6 +6,7 @@
     }"
     @mouseenter="setHover(true)"
     @mouseleave="setHover(false)"
+    @click="goToDetail"
   >
     <div
       class="col-span-2 relative"
@@ -110,5 +111,9 @@ const getRatingManga = () => {
   } else {
     return 0;
   }
+};
+
+const goToDetail = () => {
+  navigateTo(`/${props.manga.id}`);
 };
 </script>

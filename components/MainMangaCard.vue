@@ -89,6 +89,6 @@ const setHover = (value: boolean) => {
 };
 
 const goToDetail = () => {
-  console.log(props.manga.id);
+  navigateTo(`/${props.manga.id}`);
 };
 </script>

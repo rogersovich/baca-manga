@@ -40,6 +40,11 @@ export interface MangaResponse {
   total: number;
 }
 
+export interface MangaDetailResponse {
+  data: MangaData;
+  status: string;
+}
+
 export interface ChapterData {
   id: string;
   type: string;
@@ -77,6 +82,11 @@ export interface FilterMangaResponse {
   hasAvailableChapters?: string;
 }
 
+export interface FilterMangaDetailResponse {
+  includes?: string[];
+  contentRating?: string[];
+}
+
 export interface FilterMangaStatisticsResponse {
   manga: string[];
 }
@@ -92,7 +102,7 @@ export interface FilterOrders {
 
 export interface BaseResponseData<T> {
   data: T;
-  total: number;
+  total?: number;
   limit?: number;
   offset?: number;
   status: string;

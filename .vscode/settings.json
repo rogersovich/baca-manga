@@ -4,7 +4,7 @@
   "editor.quickSuggestions": { "strings": true },
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": "explicit"
   },
   "files.eol": "\n",
   "editor.defaultFormatter": "esbenp.prettier-vscode",
