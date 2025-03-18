@@ -175,12 +175,29 @@ const getTitle = computed(() => {
 });
 
 const getFileName = (manga: MangaData) => {
-  console.log(manga, "hehe");
   const coverArt = manga.relationships.find(
     (item) => item.type === "cover_art"
   );
-  console.log(manga, "coverArt");
   return coverArt?.attributes?.fileName || null;
+};
+
+const setMangaData = ({
+  responses,
+  loading,
+  error,
+}: {
+  responses: MangaData | null;
+  loading: boolean;
+  error: string | null;
+}) => {
+  mangaDetail.value.data = responses;
+
+  const mangaId = mangaDetail.value.data?.id;
+  const fileName = getFileName(mangaDetail.value.data as MangaData);
+  mangaDetail.value.imageUrl = `${baseUrlImage.value}/${mangaId}/${fileName}.512.jpg`;
+
+  mangaDetail.value.loading = loading;
+  mangaDetail.value.error = error;
 };
 
 onMounted(async () => {
@@ -189,14 +206,11 @@ onMounted(async () => {
     apiParams
   );
 
-  mangaDetail.value.data = responses.value;
-
-  const mangaId = mangaDetail.value.data?.id;
-  const fileName = getFileName(mangaDetail.value.data as MangaData);
-  mangaDetail.value.imageUrl = `${baseUrlImage.value}/${mangaId}/${fileName}.512.jpg`;
-
-  mangaDetail.value.loading = loading.value;
-  mangaDetail.value.error = error.value;
+  setMangaData({
+    responses: responses.value || null,
+    loading: loading.value,
+    error: error.value,
+  });
 
   useHead({
     title: `${getTitle.value} - Manga`,

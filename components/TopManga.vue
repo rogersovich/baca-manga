@@ -94,7 +94,7 @@ const loadMangaList = async () => {
     const data = await mangaDexService.fetchMangaList(apiParams);
     if (data) {
       listTopManga.value = data.data;
-      listTopManga.total = data.total;
+      listTopManga.total = data.total || 0;
       apiParamStatistic.manga = data.data.map((manga) => manga.id);
     } else {
       throw new Error("Failed to fetch manga list");
