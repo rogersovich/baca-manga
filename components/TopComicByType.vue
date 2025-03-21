@@ -123,6 +123,6 @@ onMounted(async () => {
 
       handleIntervalError();
     }
-  }, 0);
+  }, 2000);
 });
 </script>

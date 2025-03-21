@@ -19,6 +19,7 @@ export default defineNuxtConfig({
     "@nuxt/test-utils",
     "@nuxtjs/tailwindcss",
     "shadcn-nuxt",
+    "@pinia/nuxt",
   ],
   shadcn: {
     /**

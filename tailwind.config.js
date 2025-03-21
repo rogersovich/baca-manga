@@ -1,7 +1,24 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   darkMode: ["class"],
-  content: [],
+  content: [
+    "./pages/**/*.{vue,js,ts}",
+    "./components/**/*.{vue,js,ts}",
+    "./composables/**/*.{vue,js,ts}",
+    "./app.vue",
+  ],
+  safelist: [
+    "group-hover:text-green-400",
+    "group-hover:text-red-400",
+    "group-hover:text-purple-400",
+    "group-hover:text-blue-400",
+    "group-hover:text-gray-400",
+    "hover:text-green-400",
+    "hover:text-red-400",
+    "hover:text-purple-400",
+    "hover:text-blue-400",
+    "hover:text-gray-400",
+  ],
   theme: {
     extend: {
       borderRadius: {

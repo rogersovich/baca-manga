@@ -36,7 +36,10 @@
         </div>
       </div>
       <div class="flex items-center gap-1 mt-2">
-        <div class="text-[10px] rounded bg-gray-900 px-1 py-0.5">
+        <div
+          v-if="manga.published.prop?.from?.year"
+          class="text-[10px] rounded bg-gray-900 px-1 py-0.5"
+        >
           {{ manga.published.prop?.from?.year }}
         </div>
         <div

@@ -15,10 +15,11 @@
         transition: 'transform 0.2s ease',
       }"
     >
-      <img
-        :src="getFullImageUrl(manga)"
+      <NuxtImg
+        :src="manga.images.webp.image_url"
+        :alt="manga.title"
         class="rounded w-full h-[60px] object-cover"
-        @error="handleImageError"
+        placeholder="/images/fallback-image.png"
       />
       <div v-if="hoverState" class="container-eye-card">
         <IconEye class="w-5 h-5 text-white" />
@@ -34,39 +35,43 @@
       <div class="flex items-center gap-2 w-full mt-3 px-1">
         <div>
           <div
-            :class="{
-              'h-2 w-2 rounded-full': true,
-              'bg-green-500': manga.attributes.status === 'completed',
-              'bg-orange-500': manga.attributes.status !== 'completed',
-            }"
+            class="h-2 w-2 rounded-full"
+            :class="getBgStatusClass(manga.status)"
           ></div>
         </div>
         <div
           class="text-[13px] font-semibold text-white truncate cursor-pointer"
-          :class="{
-            'hover:text-green-400': manga.attributes.status === 'completed',
-            'hover:text-orange-500': manga.attributes.status !== 'completed',
-          }"
+          :class="getHoverBgStatusClass(manga.status, 'hover')"
         >
-          {{ manga.attributes.title.en }}
+          {{ manga.title }}
         </div>
       </div>
       <div class="flex items-center gap-2 mt-2">
         <div class="text-[10px] rounded bg-gray-900 px-1 py-0.5 text-white/50">
-          Manga
+          {{ manga.type }}
         </div>
         <div
-          v-if="manga.attributes.year"
+          v-if="manga.published.prop?.from?.year"
           class="text-[10px] rounded bg-gray-900 px-1 py-0.5 text-white/50"
         >
-          {{ manga.attributes.year }}
+          {{ manga.published.prop?.from?.year }}
         </div>
         <div
+          v-if="manga.chapters"
+          class="text-[10px] rounded bg-gray-900 px-1 py-0.5 flex items-center gap-1 text-white/50"
+        >
+          <span> Ch. </span>
+          <span>
+            {{ manga.chapters }}
+          </span>
+        </div>
+        <div
+          v-if="manga.score"
           class="text-[10px] rounded bg-gray-900 px-1 py-0.5 flex items-center gap-1"
         >
           <IconStar class="w-3 h-3 text-white/50" />
           <span class="text-white/50">
-            {{ getRatingManga() }}
+            {{ manga.score }}
           </span>
         </div>
       </div>
@@ -75,45 +80,24 @@
 </template>
 
 <script setup lang="ts">
-import type { MangaData } from "~/types/manga";
 import { IconStar, IconEye } from "@tabler/icons-vue";
-import { handleImageError } from "~/utils/fallbackImage";
+import type { TMangaResponse } from "~/types/jikanManga.type";
 
 const props = defineProps<{
-  manga: MangaData;
-  statistic: any;
+  manga: TMangaResponse;
   index: any;
   selectedIndex: any;
 }>();
 
-const baseUrlImage = ref("https://mangadex.org/covers");
+const searchStore = useSearchStore();
+
 const hoverState = ref(false);
 
 const setHover = (value: boolean) => {
   hoverState.value = value;
 };
 
-const getFileName = (manga: MangaData) => {
-  const coverArt = manga.relationships.find(
-    (item) => item.type === "cover_art"
-  );
-  return coverArt?.attributes?.fileName || null;
-};
-
-const getFullImageUrl = (manga: MangaData) => {
-  const fileName = getFileName(manga);
-  return `${baseUrlImage.value}/${manga.id}/${fileName}.256.jpg`;
-};
-
-const getRatingManga = () => {
-  if (props.statistic) {
-    return Math.round(props.statistic?.rating.average * 10) / 10;
-  } else {
-    return 0;
-  }
-};
-
 const goToDetail = () => {
-  navigateTo(`/${props.manga.id}`);
+  searchStore.setMalId(props.manga.mal_id);
 };
 </script>
