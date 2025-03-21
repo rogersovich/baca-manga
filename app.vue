@@ -1,5 +1,6 @@
 <template>
   <div class="bg-gray-950">
+    <NuxtLoadingIndicator />
     <NuxtLayout>
       <NuxtPage />
       <!-- <button class="p-2 bg-secondary rounded" @click="toggleDarkMode">

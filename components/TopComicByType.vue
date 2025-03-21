@@ -31,7 +31,29 @@
       </div>
     </template>
     <div v-if="error">
-      {{ error }}
+      <div class="flex flex-col items-center mt-5">
+        <div>
+          <img
+            src="/images/empty-data.png"
+            alt="No data available"
+            class="rounded-md h-[150px]"
+          />
+        </div>
+        <div class="text-white text-lg font-bold mt-3">Data is Empty</div>
+        <div
+          v-if="intervalError.status"
+          class="text-gray-50/50 font-light tracking-wide text-xs"
+        >
+          Please try again in {{ intervalError.second }} seconds
+        </div>
+        <Button
+          size="sm"
+          class="text-[12px] mt-2"
+          :disabled="intervalError.status"
+          @click="fetchMangas(filters)"
+          >Try Again</Button
+        >
+      </div>
     </div>
   </div>
 </template>
@@ -42,6 +64,11 @@ import type { TMangaFilterParams } from "~/types/jikanManga.type";
 const props = defineProps<{
   type: "manga" | "manhwa" | "manhua";
 }>();
+
+const intervalError = reactive({
+  status: false,
+  second: 3,
+});
 
 const filters = reactive<TMangaFilterParams>({
   page: 1,
@@ -71,9 +98,31 @@ const {
   error,
 } = useJikanManga();
 
+const handleIntervalError = () => {
+  if (error.value) {
+    intervalError.status = true;
+
+    const countdown = setInterval(() => {
+      if (intervalError.second > 1) {
+        intervalError.second -= 1;
+      } else {
+        clearInterval(countdown);
+        intervalError.second = 3;
+        intervalError.status = false;
+      }
+    }, 1000);
+  }
+};
+
 onMounted(async () => {
   setTimeout(async () => {
     await fetchMangas(filters);
-  }, 2000);
+
+    if (error.value) {
+      intervalError.status = true;
+
+      handleIntervalError();
+    }
+  }, 0);
 });
 </script>

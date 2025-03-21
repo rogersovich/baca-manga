@@ -76,10 +76,18 @@
               />
             </div>
             <div class="text-white text-2xl font-bold mt-3">Data is Empty</div>
-            <div class="text-gray-50/50 font-light tracking-wide text-sm mb-2">
-              Please try again in 5 seconds
+            <div
+              v-if="intervalError.status"
+              class="text-gray-50/50 font-light tracking-wide text-sm"
+            >
+              Please try again in 3 seconds
             </div>
-            <Button @click="handleFetchMangas(badgeFilter)">Try Again</Button>
+            <Button
+              class="mt-2"
+              :disabled="intervalError.status"
+              @click="handleFetchMangas(badgeFilter)"
+              >Try Again</Button
+            >
           </div>
         </div>
       </template>
@@ -100,6 +108,11 @@
 import type { TMangaFilterParams } from "~/types/jikanManga.type";
 
 type TBadgeFilter = "score" | "rank" | "popularity";
+
+const intervalError = reactive({
+  status: false,
+  second: 3,
+});
 
 const filters = reactive<TMangaFilterParams>({
   page: 1,
@@ -137,9 +150,27 @@ const handleFetchMangas = async (type: TBadgeFilter) => {
   await fetchMangas(filters);
 };
 
+const handleIntervalError = () => {
+  if (error.value) {
+    intervalError.status = true;
+
+    const countdown = setInterval(() => {
+      if (intervalError.second > 1) {
+        intervalError.second -= 1;
+      } else {
+        clearInterval(countdown);
+        intervalError.second = 3;
+        intervalError.status = false;
+      }
+    }, 1000);
+  }
+};
+
 onMounted(async () => {
   await fetchMangas(filters);
 
   pagination.total = res_mangaList.value?.pagination?.items?.total || 0;
+
+  handleIntervalError();
 });
 </script>
