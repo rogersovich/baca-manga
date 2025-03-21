@@ -5,22 +5,22 @@
     <div class="flex justify-between my-4">
       <div class="flex gap-2">
         <Button
-          :variant="badgeFilter == 'latest' ? 'default' : 'outline'"
-          @click="handleFetchMangas('latest')"
+          :variant="badgeFilter == 'score' ? 'default' : 'outline'"
+          @click="handleFetchMangas('score')"
         >
-          Latest Updated
+          By Score
         </Button>
         <Button
-          :variant="badgeFilter == 'recent' ? 'default' : 'outline'"
-          @click="handleFetchMangas('recent')"
+          :variant="badgeFilter == 'rank' ? 'default' : 'outline'"
+          @click="handleFetchMangas('rank')"
         >
-          Recently Added
+          By Rank
         </Button>
         <Button
-          :variant="badgeFilter == 'recommend' ? 'default' : 'outline'"
-          @click="handleFetchMangas('recommend')"
+          :variant="badgeFilter == 'popularity' ? 'default' : 'outline'"
+          @click="handleFetchMangas('popularity')"
         >
-          Best Match
+          By Popularity
         </Button>
       </div>
       <div>
@@ -29,6 +29,7 @@
           v-model:page="pagination.page"
           :items-per-page="pagination.per_page"
           :total="pagination.total"
+          :disabled="isLoading"
           @update:page="onUpdatePage($event)"
         >
           <PaginationList class="flex items-center gap-1">
@@ -53,7 +54,7 @@
     <div
       class="grid grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-6 gap-6"
     >
-      <template v-if="loading">
+      <template v-if="isLoading">
         <div v-for="i in 12" :key="i" class="col-span-1">
           <div class="flex flex-col space-y-2">
             <Skeleton class="h-[180px] w-full rounded-xl" />
@@ -83,7 +84,11 @@
         </div>
       </template>
       <template v-else>
-        <div v-for="manga in mangaList" :key="manga.id" class="col-span-1">
+        <div
+          v-for="manga in res_mangaList?.data"
+          :key="manga.mal_id"
+          class="col-span-1"
+        >
           <MainMangaCard :manga="manga" />
         </div>
       </template>
@@ -92,58 +97,49 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import { useManga } from "@/composables/useManga";
-import type {
-  FilterMangaResponse,
-  FilterOrders,
-  FilterMain,
-} from "@/types/manga";
+import type { TMangaFilterParams } from "~/types/jikanManga.type";
 
-const badgeFilter = ref<FilterMain>("latest");
-const filterOrder = ref<FilterOrders>({ updatedAt: "desc", year: "desc" });
-const apiParams = reactive<FilterMangaResponse>({
+type TBadgeFilter = "score" | "rank" | "popularity";
+
+const filters = reactive<TMangaFilterParams>({
+  page: 1,
   limit: 12,
-  offset: 0,
-  includes: ["cover_art"],
-  order: filterOrder.value,
-  contentRating: ["safe", "suggestive", "erotica"],
-  hasAvailableChapters: "true",
+  order_by: "score",
+  sort: "desc",
 });
-
-const { mangaList, loading, error, total } = useManga(apiParams);
 
 const pagination = reactive({
-  page: 1,
-  total: total,
-  per_page: 12,
+  page: filters.page,
+  total: 0,
+  per_page: filters.limit,
 });
 
-const onUpdatePage = (page: number) => {
+const badgeFilter = ref<TBadgeFilter>("score");
+const {
+  fetchMangas,
+  responses: res_mangaList,
+  isLoading,
+  error,
+} = useJikanManga();
+
+const onUpdatePage = async (page: number) => {
   pagination.page = page;
+  filters.page = page;
 
-  const limit = apiParams.limit;
-  const offset = (page - 1) * limit;
-
-  apiParams.limit = limit;
-  apiParams.offset = offset;
+  await fetchMangas(filters);
 };
 
-const handleFetchMangas = (type: FilterMain) => {
+const handleFetchMangas = async (type: TBadgeFilter) => {
   badgeFilter.value = type;
+  filters.order_by = type;
+  filters.page = 1;
 
-  if (type === "latest") {
-    filterOrder.value = { updatedAt: "desc", year: "desc" };
-  } else if (type === "recent") {
-    filterOrder.value = { createdAt: "desc", year: "desc" };
-  } else if (type === "recommend") {
-    filterOrder.value = { rating: "desc", year: "desc" };
-  }
-
-  // Trigger a refetch by updating the apiParams
-  pagination.page = 1;
-  apiParams.offset = 0;
-  apiParams.limit = 12;
-  apiParams.order = filterOrder.value;
+  await fetchMangas(filters);
 };
+
+onMounted(async () => {
+  await fetchMangas(filters);
+
+  pagination.total = res_mangaList.value?.pagination?.items?.total || 0;
+});
 </script>

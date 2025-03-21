@@ -1,25 +1,26 @@
 <template>
-  <section id="main-manga" class="mt-8">
-    <div class="text-white text-2xl font-bold">Publication Status</div>
+  <section id="main-manga">
+    <div class="text-white text-2xl font-bold">Maybe Relevant</div>
+
     <div class="flex justify-between my-4">
       <div class="flex gap-2">
         <Button
-          :variant="badgeFilter == 'ongoing' ? 'default' : 'outline'"
-          @click="handleFetchMangas('ongoing')"
+          :variant="badgeFilter == 'manga' ? 'default' : 'outline'"
+          @click="handleFetchMangas('manga')"
         >
-          On Going
+          Manga
         </Button>
         <Button
-          :variant="badgeFilter == 'completed' ? 'default' : 'outline'"
-          @click="handleFetchMangas('completed')"
+          :variant="badgeFilter == 'manhwa' ? 'default' : 'outline'"
+          @click="handleFetchMangas('manhwa')"
         >
-          Completed
+          Manhwa
         </Button>
         <Button
-          :variant="badgeFilter == 'hiatus' ? 'default' : 'outline'"
-          @click="handleFetchMangas('hiatus')"
+          :variant="badgeFilter == 'manhua' ? 'default' : 'outline'"
+          @click="handleFetchMangas('manhua')"
         >
-          Hiatus
+          Manhua
         </Button>
       </div>
       <div>
@@ -28,6 +29,7 @@
           v-model:page="pagination.page"
           :items-per-page="pagination.per_page"
           :total="pagination.total"
+          :disabled="isLoading"
           @update:page="onUpdatePage($event)"
         >
           <PaginationList class="flex items-center gap-1">
@@ -49,8 +51,10 @@
         </Pagination>
       </div>
     </div>
-    <div class="grid grid-cols-6 gap-6">
-      <template v-if="loading">
+    <div
+      class="grid grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-6 gap-6"
+    >
+      <template v-if="isLoading">
         <div v-for="i in 12" :key="i" class="col-span-1">
           <div class="flex flex-col space-y-2">
             <Skeleton class="h-[180px] w-full rounded-xl" />
@@ -61,79 +65,82 @@
           </div>
         </div>
       </template>
-      <template v-if="!loading && !error">
-        <div v-for="manga in mangaList" :key="manga.id" class="col-span-1">
+      <template v-else-if="error">
+        <div class="col-span-6">
+          <div class="flex flex-col items-center">
+            <div>
+              <img
+                src="/images/empty-data.png"
+                alt="No data available"
+                class="rounded-md h-[300px]"
+              />
+            </div>
+            <div class="text-white text-2xl font-bold mt-3">Data is Empty</div>
+            <div class="text-gray-50/50 font-light tracking-wide text-sm mb-2">
+              Please try again in 5 seconds
+            </div>
+            <Button @click="handleFetchMangas(badgeFilter)">Try Again</Button>
+          </div>
+        </div>
+      </template>
+      <template v-else>
+        <div
+          v-for="manga in res_mangaList?.data"
+          :key="manga.mal_id"
+          class="col-span-1"
+        >
           <MainMangaCard :manga="manga" />
         </div>
       </template>
-      <div v-if="error" class="col-span-6">
-        <div class="flex flex-col items-center">
-          <div>
-            <img
-              src="/images/empty-data.png"
-              alt="No data available"
-              class="rounded-md h-[300px]"
-            />
-          </div>
-          <div class="text-white text-2xl font-bold mt-3">Data is Empty</div>
-          <div class="text-gray-50/50 font-light tracking-wide text-sm mb-2">
-            Please try again in 5 seconds
-          </div>
-          <Button @click="handleFetchMangas(badgeFilter)">Try Again</Button>
-        </div>
-      </div>
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import { useManga } from "@/composables/useManga";
-import type {
-  FilterMangaResponse,
-  FilterOrders,
-  FilterStatus,
-} from "@/types/manga";
+import type { TMangaFilterParams } from "~/types/jikanManga.type";
 
-const badgeFilter = ref<FilterStatus>("ongoing");
-const filterOrder = ref<FilterOrders>({ year: "desc" });
-const filterStatus = ref<FilterStatus>("ongoing");
-const apiParams = reactive<FilterMangaResponse>({
+type TBadgeFilter = "manga" | "manhwa" | "manhua";
+
+const badgeFilter = ref<TBadgeFilter>("manga");
+const filters = reactive<TMangaFilterParams>({
+  page: 1,
   limit: 12,
-  offset: 0,
-  includes: ["cover_art"],
-  order: filterOrder.value,
-  contentRating: ["safe", "suggestive", "erotica"],
-  hasAvailableChapters: "true",
-  status: [filterStatus.value],
+  order_by: "score",
+  sort: "desc",
+  type: badgeFilter.value,
 });
-
-const { mangaList, loading, error, total } = useManga(apiParams);
 
 const pagination = reactive({
-  page: 1,
-  total: total,
-  per_page: 12,
+  page: filters.page,
+  total: 0,
+  per_page: filters.limit,
 });
 
-const onUpdatePage = (page: number) => {
+const {
+  fetchMangas,
+  responses: res_mangaList,
+  isLoading,
+  error,
+} = useJikanManga();
+
+const onUpdatePage = async (page: number) => {
   pagination.page = page;
+  filters.page = page;
 
-  const limit = apiParams.limit;
-  const offset = (page - 1) * limit;
-
-  apiParams.limit = limit;
-  apiParams.offset = offset;
+  await fetchMangas(filters);
 };
 
-const handleFetchMangas = (type: FilterStatus) => {
+const handleFetchMangas = async (type: TBadgeFilter) => {
   badgeFilter.value = type;
-  filterStatus.value = type;
+  filters.type = type;
+  filters.page = 1;
 
-  // Trigger a refetch by updating the apiParams
-  pagination.page = 1;
-  apiParams.offset = 0;
-  apiParams.limit = 12;
-  apiParams.status = [filterStatus.value];
+  await fetchMangas(filters);
 };
+
+onMounted(async () => {
+  await fetchMangas(filters);
+
+  pagination.total = res_mangaList.value?.pagination?.items?.total || 0;
+});
 </script>

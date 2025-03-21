@@ -4,7 +4,6 @@
       <div id="all-content" class="col-span-8">
         <SectionMainManga />
         <SectionStatusManga />
-        <SectionDemographicManga />
       </div>
       <div id="top-content" class="col-span-4">
         <TopManga />
