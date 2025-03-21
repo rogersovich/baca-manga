@@ -10,7 +10,7 @@
   >
     <div class="col-span-3 relative">
       <img
-        :src="getFullImageUrl(manga)"
+        :src="manga.images.webp.image_url"
         class="rounded-md w-full h-[100px] xl:h-[125px] 2xl:h-[150px] object-cover"
         @error="handleImageError"
       />
@@ -21,43 +21,49 @@
     <div class="col-span-10">
       <div class="flex items-center gap-2 w-full mt-3 px-1">
         <div>
-          <div
-            :class="{
-              'h-2 w-2 rounded-full': true,
-              'bg-green-500': manga.attributes.status === 'completed',
-              'bg-orange-500': manga.attributes.status !== 'completed',
-            }"
-          ></div>
+          <div class="h-2 w-2 rounded-full" :class="getBgStatusClass()"></div>
+        </div>
+        <div
+          class="text-[13px] text-white font-bold"
+          :class="getHoverBgClass()"
+        >
+          #{{ manga.rank }}
         </div>
         <div
           class="text-[13px] font-semibold text-white truncate cursor-pointer"
-          :class="{
-            'hover:text-green-400': manga.attributes.status === 'completed',
-            'hover:text-orange-500': manga.attributes.status !== 'completed',
-          }"
+          :class="getHoverBgClass()"
         >
-          {{ manga.attributes.title.en }}
+          {{ manga.title }}
         </div>
       </div>
       <div
-        v-if="manga.attributes.description?.en"
+        v-if="manga.synopsis"
         class="text-[12px] text-gray-50/50 line-clamp-2 mt-2"
       >
-        {{ manga.attributes.description?.en }}
+        {{ manga.synopsis }}
       </div>
       <div class="flex items-center gap-2 mt-2">
         <div class="text-[10px] rounded bg-gray-900 px-1 py-0.5 text-white/50">
           Manga
         </div>
         <div class="text-[10px] rounded bg-gray-900 px-1 py-0.5 text-white/50">
-          {{ manga.attributes.year }}
+          {{ manga.published.prop?.from?.year }}
+        </div>
+        <div
+          v-if="manga.chapters"
+          class="text-[10px] rounded bg-gray-900 px-1 py-0.5 flex items-center gap-1"
+        >
+          <span> Ch. </span>
+          <span>
+            {{ manga.chapters }}
+          </span>
         </div>
         <div
           class="text-[10px] rounded bg-gray-900 px-1 py-0.5 flex items-center gap-1"
         >
           <IconStar class="w-3 h-3 text-white/50" />
           <span class="text-white/50">
-            {{ getRatingManga() }}
+            {{ manga.score }}
           </span>
         </div>
       </div>
@@ -66,39 +72,51 @@
 </template>
 
 <script setup lang="ts">
-import type { MangaData } from "~/types/manga";
 import { IconStar, IconEye } from "@tabler/icons-vue";
+import type { TMangaResponse } from "~/types/jikanManga.type";
 import { handleImageError } from "~/utils/fallbackImage";
 
 const props = defineProps<{
-  manga: MangaData;
-  statistic: any;
+  manga: TMangaResponse;
 }>();
 
-const baseUrlImage = ref("https://mangadex.org/covers");
 const hoverState = ref(false);
 
 const setHover = (value: boolean) => {
   hoverState.value = value;
 };
 
-const getFileName = (manga: MangaData) => {
-  const coverArt = manga.relationships.find(
-    (item) => item.type === "cover_art"
-  );
-  return coverArt?.attributes?.fileName || null;
+const getBgStatusClass = () => {
+  switch (props.manga.status) {
+    case "Finished":
+      return "bg-green-500";
+    case "Discontinued":
+      return "bg-red-500";
+    case "On Hiatus":
+      return "bg-purple-500";
+    case "Publishing":
+      return "bg-blue-500";
+    case "Not yet published":
+      return "bg-gray-500";
+    default:
+      return "bg-gray-300";
+  }
 };
 
-const getFullImageUrl = (manga: MangaData) => {
-  const fileName = getFileName(manga);
-  return `${baseUrlImage.value}/${manga.id}/${fileName}.256.jpg`;
-};
-
-const getRatingManga = () => {
-  if (props.statistic) {
-    return Math.round(props.statistic?.rating.average * 10) / 10;
-  } else {
-    return 0;
+const getHoverBgClass = () => {
+  switch (props.manga.status) {
+    case "Finished":
+      return "group-hover:text-green-400";
+    case "Discontinued":
+      return "group-hover:text-red-400";
+    case "On Hiatus":
+      return "group-hover:text-purple-400";
+    case "Publishing":
+      return "group-hover:text-blue-400";
+    case "Not yet published":
+      return "group-hover:text-gray-400";
+    default:
+      return "";
   }
 };
 </script>

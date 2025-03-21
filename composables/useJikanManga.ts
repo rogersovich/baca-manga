@@ -10,7 +10,7 @@ type ErrorResponse = any;
 
 export function useJikanManga() {
   const responses = ref<MangasReponse>();
-  const isLoading = ref(false);
+  const isLoading = ref(true);
   const error = ref<ErrorResponse>(null);
   const config = useRuntimeConfig();
 
@@ -42,10 +42,13 @@ export function useJikanManga() {
     const cacheKey = `get-mangas-${stringParams}`;
 
     const data = await BaseFetch<MangasReponse>(url, cacheKey, 60, isRefresh);
-    if (data) {
+    const status = +data?.status;
+
+    if (status < 300 && data) {
+      error.value = null;
       responses.value = data;
     } else {
-      error.value = "Failed to fetch profile";
+      error.value = data?.message;
     }
     isLoading.value = false;
   };

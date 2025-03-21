@@ -1,5 +1,5 @@
 <template>
-  <section id="main-manga">
+  <section id="main-manga" class="mt-6">
     <div class="text-white text-2xl font-bold">Maybe Relevant</div>
 
     <div class="flex justify-between my-4">

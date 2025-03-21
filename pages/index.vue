@@ -6,8 +6,8 @@
         <SectionStatusManga />
       </div>
       <div id="top-content" class="col-span-4">
-        <TopManga />
-        <TopNewManga />
+        <TopComicByType type="manga" />
+        <TopComicByType type="manhwa" />
       </div>
     </section>
   </div>

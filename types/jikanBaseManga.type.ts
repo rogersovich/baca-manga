@@ -1,6 +1,8 @@
 export interface TBaseResponse<T> {
   data: T;
-  pagination: TBasePagination;
+  pagination?: TBasePagination;
+  status: any;
+  message?: any;
 }
 
 export interface TBasePagination {

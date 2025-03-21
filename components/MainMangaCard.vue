@@ -24,25 +24,13 @@
       <div class="flex items-center gap-2 w-full mt-3 px-1">
         <div>
           <div
-            :class="{
-              'h-2 w-2 rounded-full': true,
-              'bg-green-500': manga.status === 'Finished',
-              'bg-red-500': manga.status === 'Discontinued',
-              'bg-purple-500': manga.status === 'On Hiatus',
-              'bg-blue-500': manga.status === 'Publishing',
-              'bg-gray-500': manga.status === 'Not yet published',
-            }"
+            class="h-2 w-2 rounded-full"
+            :class="getBgStatusClass(manga.status)"
           ></div>
         </div>
         <div
           class="text-[13px] font-semibold text-white truncate cursor-pointer"
-          :class="{
-            'group-hover:text-green-400': manga.status === 'Finished',
-            'group-hover:text-red-400': manga.status === 'Discontinued',
-            'group-hover:text-purple-400': manga.status === 'On Hiatus',
-            'group-hover:text-blue-400': manga.status === 'Publishing',
-            'group-hover:text-gray-400': manga.status === 'Not yet published',
-          }"
+          :class="getHoverBgClass(manga.status)"
         >
           {{ manga.title }}
         </div>
@@ -87,6 +75,40 @@ const hoverState = ref(false);
 
 const setHover = (value: boolean) => {
   hoverState.value = value;
+};
+
+const getBgStatusClass = (status: any) => {
+  switch (status) {
+    case "Finished":
+      return "bg-green-500";
+    case "Discontinued":
+      return "bg-red-500";
+    case "On Hiatus":
+      return "bg-purple-500";
+    case "Publishing":
+      return "bg-blue-500";
+    case "Not yet published":
+      return "bg-gray-500";
+    default:
+      return "bg-gray-300";
+  }
+};
+
+const getHoverBgClass = (status: any) => {
+  switch (status) {
+    case "Finished":
+      return "group-hover:text-green-400";
+    case "Discontinued":
+      return "group-hover:text-red-400";
+    case "On Hiatus":
+      return "group-hover:text-purple-400";
+    case "Publishing":
+      return "group-hover:text-blue-400";
+    case "Not yet published":
+      return "group-hover:text-gray-400";
+    default:
+      return "";
+  }
 };
 
 const goToDetail = () => {

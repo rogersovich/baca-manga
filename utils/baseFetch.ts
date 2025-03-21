@@ -22,16 +22,22 @@ export async function BaseFetch<T>(
 
     // Fetch new data from API
     const response = await fetch(url);
-    if (!response.ok) throw new Error(`Failed to fetch: ${url}`);
+    if (!response.ok) {
+      return {
+        status: response.status,
+        message: response.statusText,
+        data: null,
+      } as T;
+    }
 
     const data = await response.json();
+    data.status = response.status;
 
     // Store data in memory cache with timestamp
     cache.set(cacheKey, { data, timestamp: now });
 
     return data as T;
   } catch (error) {
-    console.error(`[Error] Fetching API: ${url}`, error);
-    return null;
+    return error as T;
   }
 }
