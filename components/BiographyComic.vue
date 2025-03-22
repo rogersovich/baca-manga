@@ -25,7 +25,7 @@
           @click="openExternalURL(comic?.url || '')"
         >
           <IconEye class="w-3 h-3" />
-          <span> Read a Comic </span>
+          <span> More info </span>
         </Button>
         <Button size="sm" variant="outline">
           <IconBookmark class="w-3 h-3" />
@@ -37,7 +37,7 @@
         </Button>
         <Button size="sm" variant="outline" class="cursor-text">
           <span>Rank</span>
-          <span>#{{ comic?.rank }}</span>
+          <span>#{{ comic?.rank || "?" }}</span>
         </Button>
         <Button size="sm" variant="outline" class="cursor-text">
           <IconUsersGroup class="w-3 h-3" />

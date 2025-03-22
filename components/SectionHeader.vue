@@ -53,6 +53,7 @@
       </div>
       <div
         class="border border-gray-50/10 rounded-md p-[7px] cursor-pointer group hover:border-gray-50/20"
+        @click="handleFetchRandomManga"
       >
         <IconArrowsShuffle
           class="size-5 text-muted-foreground group-hover:text-primary"
@@ -74,6 +75,7 @@ import { onClickOutside, useDebounce, useEventListener } from "@vueuse/core";
 import type { TMangaFilterParams } from "~/types/jikanManga.type";
 
 const searchStore = useSearchStore();
+const comicStore = useComicStore();
 const inputRef = ref(null);
 const searchQuery = ref("");
 const searchIndex = ref<number | null>(null);
@@ -109,6 +111,8 @@ const {
   isLoading,
   error,
 } = useJikanManga();
+
+const { fetchRandomManga, responses: resRandomManga } = useJikanRandomManga();
 
 const setHover = (index: number | null) => {
   searchIndex.value = index;
@@ -191,5 +195,18 @@ useEventListener("keydown", (event) => {
 
 const goHome = () => {
   navigateTo("/");
+};
+
+const handleFetchRandomManga = async () => {
+  await fetchRandomManga();
+
+  comicStore.setRandomComic(true);
+  const randomManga = resRandomManga.value?.data;
+
+  const slug = titleToSlug(randomManga?.title || "");
+  const id = randomManga?.mal_id;
+  const url = `/${slug}/${id}`;
+
+  await navigateTo(url, { replace: true });
 };
 </script>

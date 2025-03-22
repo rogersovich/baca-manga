@@ -159,6 +159,7 @@ import { IconArrowLeft, IconUserFilled } from "@tabler/icons-vue";
 import { useDateFormat } from "@vueuse/core";
 
 const route = useRoute();
+const comicStore = useComicStore();
 
 const title = slugToTitle(route.params.title as string);
 const comic_id = +route.params.id;
@@ -251,11 +252,23 @@ const isAuthorMatch = (relName: string, targetName: string): boolean => {
   return normalizedRel === normalizedTarget;
 };
 
+const waitForSeconds = (seconds: number): Promise<void> => {
+  return new Promise((resolve) => setTimeout(resolve, seconds));
+};
+
+const checkRandomManga = async () => {
+  if (comicStore.is_random_comic) {
+    await waitForSeconds(1000);
+    comicStore.setRandomComic(false);
+  }
+};
+
 onMounted(async () => {
-  await Promise.all([
-    fetchMangaDetail(comic_id),
-    fetchMangaCharacter(comic_id),
-  ]);
+  await checkRandomManga();
+
+  await fetchMangaDetail(comic_id);
+  await waitForSeconds(500);
+  await fetchMangaCharacter(comic_id);
 
   const getAuthorName =
     comicDetail.value?.data?.authors
