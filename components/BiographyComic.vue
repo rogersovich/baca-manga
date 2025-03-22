@@ -33,7 +33,7 @@
         </Button>
         <Button size="sm" variant="outline" class="cursor-text">
           <IconStar class="w-3 h-3" />
-          <span>{{ comic?.score }}</span>
+          <span>{{ comic?.score || 0 }}</span>
         </Button>
         <Button size="sm" variant="outline" class="cursor-text">
           <span>Rank</span>

@@ -10,16 +10,14 @@
     </div>
     <div class="col-start-4 col-span-6 border border-gray-50/10 rounded-md">
       <div class="relative">
-        <template v-if="isLoading">
-          <Skeleton class="h-[200px] w-full rounded" />
+        <template v-if="isLoading || (isLoadingKitsu && !coverImg)">
+          <Skeleton class="h-[250px] w-full rounded" />
         </template>
         <template v-else>
           <NuxtImg
-            :src="
-              comic?.images.webp.large_image_url || comic?.images.webp.image_url
-            "
+            :src="coverImg"
             :alt="comic?.title"
-            class="h-[200px] w-full object-cover object-center rounded-t-md"
+            class="h-[300px] w-full object-cover object-center rounded-t-md"
             placeholder="/images/fallback-image.png"
           />
           <div class="absolute bottom-0 inset-0 back-drop-cuk"></div>
@@ -132,47 +130,37 @@ const {
   error: errorCharacter,
 } = useJikanMangaCharacter();
 
+const {
+  responses: kitsuManga,
+  fetchKitsuMangas,
+  isLoading: isLoadingKitsu,
+} = useKitsuManga();
+
 const comic = computed(() => {
   return comicDetail.value?.data ?? null;
 });
 
-// const openExternalURL = (url: string) => {
-//   window.open(url, "_blank");
-// };
-
-// const formatDate = (date: string, format = "MMM DD, YYYY") => {
-//   return useDateFormat(date, format);
-// };
-
-// const getAuthorsDetail = computed(() => {
-//   const combinedArray = [
-//     ...(comic.value?.authors || []),
-//     ...(comic.value?.serializations || []),
-//   ];
-
-//   return combinedArray;
-// });
-
-// const getClassGrid = () => {
-//   const gridClass = clsx("grid gap-2", {
-//     "grid-cols-1": getAuthorsDetail.value.length === 1,
-//     "grid-cols-2": getAuthorsDetail.value.length === 2,
-//     "grid-cols-3": getAuthorsDetail.value.length === 3,
-//     "grid-cols-4": getAuthorsDetail.value.length === 4,
-//     "grid-cols-5": getAuthorsDetail.value.length >= 5,
-//   });
-
-//   return gridClass;
-// };
-
-// const formatNumber = (num: number): string => {
-//   return num.toLocaleString("en-US");
-// };
+const coverImg = computed(() => {
+  let image;
+  if (kitsuManga.value && kitsuManga.value?.data.length > 0) {
+    const manga_kitsu = kitsuManga.value?.data[0];
+    const cover_img =
+      manga_kitsu.attributes.coverImage?.small ||
+      manga_kitsu.attributes.coverImage?.tiny;
+    image = cover_img || comic.value?.images.webp.image_url;
+  }
+  return image;
+});
 
 onMounted(async () => {
   await Promise.all([
     fetchMangaDetail(comic_id),
     fetchMangaCharacter(comic_id),
   ]);
+
+  await fetchKitsuMangas({
+    title: title,
+    limit: 1,
+  });
 });
 </script>

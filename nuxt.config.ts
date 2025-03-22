@@ -8,7 +8,8 @@ export default defineNuxtConfig({
 
     // Public variables available on client and server
     public: {
-      apiUrl: process.env.API_JIKAN_URL,
+      apiJikan: process.env.API_JIKAN_URL,
+      apiKitsu: process.env.API_KITSU_URL,
     },
   },
 

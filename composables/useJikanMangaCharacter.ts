@@ -15,7 +15,7 @@ export function useJikanMangaCharacter() {
     isLoading.value = true;
     error.value = null;
 
-    const url = `${config.public.apiUrl}/manga/${comic_id}/characters`;
+    const url = `${config.public.apiJikan}/manga/${comic_id}/characters`;
     const cacheKey = `get-manga-characters-${comic_id}`;
 
     const data = await BaseFetch<CharacterReponse>(

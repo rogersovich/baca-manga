@@ -38,7 +38,7 @@ export function useJikanManga() {
 
     const stringParams = queryParams.toString();
 
-    const url = `${config.public.apiUrl}/manga?${stringParams}`;
+    const url = `${config.public.apiJikan}/manga?${stringParams}`;
     const cacheKey = `get-mangas-${stringParams}`;
 
     const data = await BaseFetch<MangasReponse>(url, cacheKey, 60, isRefresh);

@@ -20,7 +20,7 @@
         !isLoadingCharacter && !errorCharacter && characters.length > 0
       "
     >
-      <div class="grid grid-cols-4 gap-4">
+      <div class="grid grid-cols-4 gap-4 max-h-[600px] overflow-y-auto">
         <template v-if="lessCharacters.length > 0">
           <div
             v-for="char in lessCharacters"
@@ -87,20 +87,22 @@
             ></div>
           </div>
         </template>
-        <div class="col-span-4">
-          <div class="w-full text-center my-2">
-            <Button
-              variant="secondary"
-              @click="
-                isMoreCharacters
-                  ? (isMoreCharacters = false)
-                  : (isMoreCharacters = true)
-              "
+      </div>
+      <div class="mt-6">
+        <div class="w-full text-center my-2">
+          <Button
+            variant="secondary"
+            @click="
+              isMoreCharacters
+                ? (isMoreCharacters = false)
+                : (isMoreCharacters = true)
+            "
+          >
+            <span v-if="!isMoreCharacters && characters.length > 16"
+              >More Characters</span
             >
-              <span v-if="!isMoreCharacters">More Characters</span>
-              <span v-if="isMoreCharacters">Less Characters</span>
-            </Button>
-          </div>
+            <span v-if="isMoreCharacters">Less Characters</span>
+          </Button>
         </div>
       </div>
     </template>
