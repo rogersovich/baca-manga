@@ -203,7 +203,98 @@
                 </template>
 
                 <div>
-                  <div class="font-semibold text-lg mb-2">Daftar Chapters</div>
+                  <div class="font-semibold text-lg mb-3">Characters</div>
+                  <div v-if="isLoadingCharacter">Loading...</div>
+                  <div v-else-if="errorCharacter">
+                    Error {{ errorCharacter }}">
+                  </div>
+                  <template v-else>
+                    <div class="grid grid-cols-4 gap-4">
+                      <template v-if="lessCharacters.length > 0">
+                        <div
+                          v-for="char in lessCharacters"
+                          :key="char.character.mal_id"
+                          class="col-span-1 relative hover:scale-[1.085] transition-all duration-300 ease-in-out"
+                        >
+                          <NuxtImg
+                            :src="char.character.images.webp.image_url"
+                            :alt="comic?.title"
+                            class="h-[200px] w-full object-cover object-center rounded-t-md"
+                            placeholder="/images/fallback-image.png"
+                          />
+                          <div
+                            class="absolute z-10 top-2 left-2 px-1 py-0.5 rounded"
+                            :class="{
+                              'bg-blue-600/80': char.role == 'Main',
+                              'bg-yellow-600/80': char.role == 'Supporting',
+                            }"
+                          >
+                            <div class="text-[11px] text-white">
+                              {{ char.role }}
+                            </div>
+                          </div>
+                          <div class="absolute z-10 bottom-2 left-2">
+                            <div
+                              class="text-[13px] truncate text-white font-bold"
+                            >
+                              {{ char.character.name }}
+                            </div>
+                          </div>
+                          <div
+                            class="absolute z-0 inset-0 h-full w-full bg-gradient-to-t from-gray-950 via-transparent"
+                          ></div>
+                        </div>
+                      </template>
+                      <template
+                        v-if="moreCharacters.length > 0 && isMoreCharacters"
+                      >
+                        <div
+                          v-for="char in moreCharacters"
+                          :key="char.character.mal_id"
+                          class="col-span-1 relative hover:scale-[1.085] transition-all duration-300 ease-in-out"
+                        >
+                          <NuxtImg
+                            :src="char.character.images.webp.image_url"
+                            :alt="comic?.title"
+                            class="h-[200px] w-full object-cover object-center rounded-t-md"
+                            placeholder="/images/fallback-image.png"
+                          />
+                          <div
+                            class="absolute z-10 top-2 left-2 px-1 py-0.5 rounded"
+                            :class="{
+                              'bg-blue-600/80': char.role == 'Main',
+                              'bg-yellow-600/80': char.role == 'Supporting',
+                            }"
+                          >
+                            <div class="text-[11px] text-white">
+                              {{ char.role }}
+                            </div>
+                          </div>
+                          <div class="absolute z-10 bottom-2 left-2">
+                            <div
+                              class="text-[13px] truncate text-white font-bold"
+                            >
+                              {{ char.character.name }}
+                            </div>
+                          </div>
+                          <div
+                            class="absolute z-0 inset-0 h-full w-full bg-gradient-to-t from-gray-950 via-transparent"
+                          ></div>
+                        </div>
+                      </template>
+                      <template v-if="!isMoreCharacters">
+                        <div class="col-span-4">
+                          <div class="w-full text-center my-2">
+                            <Button
+                              variant="secondary"
+                              @click="isMoreCharacters = true"
+                              >More Characters</Button
+                            >
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </template>
                 </div>
               </div>
             </div>
@@ -243,8 +334,25 @@ const {
   error,
 } = useJikanMangaDetail();
 
+const {
+  responses: characters,
+  fetchMangaCharacter,
+  isLoading: isLoadingCharacter,
+  error: errorCharacter,
+} = useJikanMangaCharacter();
+
+const isMoreCharacters = ref(false);
+
 const comic = computed(() => {
   return comicDetail.value?.data ?? null;
+});
+
+const lessCharacters = computed(() => {
+  return characters.value?.data.slice(0, 16) ?? [];
+});
+
+const moreCharacters = computed(() => {
+  return characters.value?.data.slice(16, characters.value.data.length) ?? [];
 });
 
 const openExternalURL = (url: string) => {
@@ -281,6 +389,9 @@ const formatNumber = (num: number): string => {
 };
 
 onMounted(async () => {
-  await fetchMangaDetail(comic_id);
+  await Promise.all([
+    fetchMangaDetail(comic_id),
+    fetchMangaCharacter(comic_id),
+  ]);
 });
 </script>
