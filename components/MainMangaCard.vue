@@ -115,6 +115,9 @@ const getHoverBgClass = (status: any) => {
 };
 
 const goToDetail = () => {
-  navigateTo(`/${props.manga.mal_id}`);
+  const slug = titleToSlug(props.manga.title);
+  const id = props.manga.mal_id;
+  const url = `/${slug}/${id}`;
+  navigateTo(url);
 };
 </script>

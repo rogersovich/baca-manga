@@ -7,6 +7,7 @@
     }"
     @mouseenter="setHover(true)"
     @mouseleave="setHover(false)"
+    @click="goToDetail"
   >
     <div class="col-span-3 relative">
       <img
@@ -118,5 +119,12 @@ const getHoverBgClass = () => {
     default:
       return "";
   }
+};
+
+const goToDetail = () => {
+  const slug = titleToSlug(props.manga.title);
+  const id = props.manga.mal_id;
+  const url = `/${slug}/${id}`;
+  navigateTo(url);
 };
 </script>

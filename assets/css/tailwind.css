@@ -82,9 +82,6 @@
   background: rgba(0, 0, 0, 0.3);
 }
 
-.backshadow-image {
-  position: absolute;
-  inset: 0px;
-  z-index: 1;
-  background: linear-gradient(45deg, var(--global-primary-bg) 5%, transparent 60%), linear-gradient(0deg, var(--global-primary-bg) 0%, transparent 60%);
+.back-drop-cuk {
+  background: linear-gradient(30deg, #000 5%, transparent 60%), linear-gradient(0deg, #000 0%, transparent 60%);
 }

@@ -90,7 +90,14 @@ watch(
   (newVal) => {
     if (newVal === 0) return;
 
-    navigateTo(`/${newVal}`);
+    const selectedComic = res_mangaList.value?.data.find(
+      (comic) => comic.mal_id === newVal
+    );
+    const slug = titleToSlug(selectedComic?.title || "");
+    const id = newVal;
+    const url = `/${slug}/${id}`;
+
+    navigateTo(url);
     clearSearch();
     searchStore.setMalId(0);
   }
