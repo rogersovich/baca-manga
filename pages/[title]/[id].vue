@@ -53,9 +53,11 @@
 
             <template v-else>
               <div
+                v-if="comic?.synopsis"
                 class="text-gray-50/50 text-sm whitespace-pre-line"
                 v-html="comic?.synopsis"
               ></div>
+              <div class="text-gray-50/50 text-sm whitespace-pre-line">-</div>
             </template>
           </div>
 
@@ -91,6 +93,55 @@
               </div>
             </div>
           </template>
+          <template v-if="isLoadingChapter"> Loading chapters... </template>
+          <template v-else-if="errorChapter"> Loading chapters... </template>
+          <template v-else>
+            <template
+              v-if="mangadexChapters?.data && mangadexChapters?.data.length > 0"
+            >
+              <div>
+                <div class="font-semibold text-lg text-white mb-3">
+                  List Chapter
+                </div>
+                <div class="flex flex-col w-full gap-2">
+                  <div
+                    v-for="chapter in uniqueChapters"
+                    :key="chapter.id"
+                    class="flex w-full border border-gray-50/10 px-3 py-2 rounded-md cursor-pointer hover:bg-gray-900 hover:border-blue-900 group"
+                  >
+                    <div class="basis-[80%]">
+                      <div class="text-[16px] mb-1 group-hover:text-blue-500">
+                        Chapter {{ chapter.attributes.chapter }}
+                        <span v-if="chapter.attributes.title">
+                          - {{ chapter.attributes.title }}
+                        </span>
+                      </div>
+                      <div
+                        class="text-xs text-gray-50/50 flex items-center gap-2"
+                      >
+                        <IconUserFilled class="w-3.5 h-3.5" />
+                        {{
+                          chapter.relationships.find(
+                            (item) => item.type == "scanlation_group"
+                          )?.attributes?.name
+                        }}
+                      </div>
+                    </div>
+                    <div class="basis-[20%] flex items-center justify-end">
+                      <div class="text-xs text-gray-50/50">
+                        {{ formatDate(chapter.attributes.createdAt || "") }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="w-full text-center mt-5">
+                  <Button variant="secondary">
+                    <span>More Chapters</span>
+                  </Button>
+                </div>
+              </div>
+            </template>
+          </template>
 
           <ListCharacterComic
             :characters="characters?.data || []"
@@ -104,7 +155,8 @@
 </template>
 
 <script setup lang="ts">
-import { IconArrowLeft } from "@tabler/icons-vue";
+import { IconArrowLeft, IconUserFilled } from "@tabler/icons-vue";
+import { useDateFormat } from "@vueuse/core";
 
 const route = useRoute();
 
@@ -136,6 +188,15 @@ const {
   isLoading: isLoadingKitsu,
 } = useKitsuManga();
 
+const { fetchComicMangadex, responses: mangadexComics } = useMangadexManga();
+
+const {
+  fetchChapterMangadex,
+  responses: mangadexChapters,
+  isLoading: isLoadingChapter,
+  error: errorChapter,
+} = useMangadexChapter();
+
 const comic = computed(() => {
   return comicDetail.value?.data ?? null;
 });
@@ -152,15 +213,125 @@ const coverImg = computed(() => {
   return image;
 });
 
+const formatDate = (date: string, format = "MMM DD, YYYY") => {
+  return useDateFormat(date, format);
+};
+
+const generateChapterArray = (chapter: number): string[] => {
+  return Array.from({ length: chapter }, (_, i) => (i + 1).toString());
+};
+
+const uniqueChapters = computed(() => {
+  const seen = new Set();
+  return mangadexChapters.value?.data
+    .filter((item) => {
+      const chapterNum = item.attributes.chapter;
+      if (!chapterNum || seen.has(chapterNum)) return false;
+      seen.add(chapterNum);
+      return true;
+    })
+    .sort(
+      (a, b) =>
+        parseFloat(a.attributes.chapter) - parseFloat(b.attributes.chapter)
+    )
+    .slice(0, 5);
+});
+
+const normalizeJapaneseName = (name: string): string => {
+  return name
+    .toLowerCase()
+    .replace(/ou/g, "o") // Convert 'ou' to 'o' (Kentarou -> Kentaro)
+    .replace(/\s+/g, " ") // Replace multiple spaces with a single space
+    .trim(); // Remove leading/trailing spaces
+};
+
+const isAuthorMatch = (relName: string, targetName: string): boolean => {
+  const normalizedRel = normalizeJapaneseName(relName);
+  const normalizedTarget = normalizeJapaneseName(targetName);
+  return normalizedRel === normalizedTarget;
+};
+
 onMounted(async () => {
   await Promise.all([
     fetchMangaDetail(comic_id),
     fetchMangaCharacter(comic_id),
   ]);
 
+  const getAuthorName =
+    comicDetail.value?.data?.authors
+      ?.filter((item) => item.type === "people")
+      ?.map((item) => item.name)
+      ?.shift()
+      ?.replace(",", "") || "-";
+
   await fetchKitsuMangas({
     title: title,
     limit: 1,
   });
+
+  await fetchComicMangadex({
+    limit: 5,
+    offset: 0,
+    title: title,
+    contentRating: ["safe", "suggestive", "erotica"],
+    order: {
+      relevance: "desc",
+      followedCount: "desc",
+    },
+    includes: ["author"],
+  });
+
+  let getComic = null;
+  let getAuthor = null as any;
+  let getComicId = "" as any;
+  if (mangadexComics.value && mangadexComics.value?.data.length > 0) {
+    getComic = mangadexComics.value?.data.find((item) => {
+      const mangaWithAuthor = item.relationships?.find((rel) => {
+        const relName = rel.attributes?.name || "";
+        const targetName = getAuthorName || "";
+
+        // Normalize both names: split -> sort -> join
+        const normalize = (name: any) =>
+          name.toLowerCase().split(" ").sort().join(" ");
+        const checkAuthorMatch = isAuthorMatch(
+          normalize(relName),
+          normalize(targetName)
+        );
+
+        const isMatch = rel.type === "author" && checkAuthorMatch;
+
+        return isMatch;
+      });
+
+      if (mangaWithAuthor) {
+        getAuthor = mangaWithAuthor; // ✅ Set the selectedAuthor if found
+        return true;
+      }
+
+      return false;
+    });
+
+    if (getAuthor) {
+      getComicId = getComic?.id;
+    }
+  }
+
+  if (getComicId) {
+    const totalChapter = 10;
+    const arrChapter = generateChapterArray(totalChapter);
+
+    await fetchChapterMangadex({
+      limit: totalChapter,
+      manga: getComicId,
+      contentRating: ["safe", "suggestive", "erotica"],
+      translatedLanguage: ["en"],
+      includes: ["scanlation_group"],
+      chapter: arrChapter,
+      order: {
+        volume: "asc",
+      },
+      includeEmptyPages: "no",
+    });
+  }
 });
 </script>

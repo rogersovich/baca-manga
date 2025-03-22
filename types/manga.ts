@@ -24,7 +24,7 @@ export interface MangaRelationships {
   attributes?: any;
 }
 
-export interface MangaData {
+export interface TMangadexMangaData {
   id: string;
   type: string;
   attributes: MangaAttributes;
@@ -32,7 +32,7 @@ export interface MangaData {
 }
 
 export interface MangaResponse {
-  data: MangaData[];
+  data: TMangadexMangaData[];
   limit: number;
   offset: number;
   response: string;
@@ -41,7 +41,7 @@ export interface MangaResponse {
 }
 
 export interface MangaDetailResponse {
-  data: MangaData;
+  data: TMangadexMangaData;
   status: string;
 }
 
@@ -68,7 +68,7 @@ export type FilterPublicationDemographic =
   | "josei"
   | "seinen";
 
-export interface FilterMangaResponse {
+export interface FilterMangaPayload {
   ids?: string[];
   limit: number;
   offset: number;
@@ -80,6 +80,18 @@ export interface FilterMangaResponse {
   publicationDemographic?: FilterPublicationDemographic[];
   order?: FilterOrders;
   hasAvailableChapters?: string;
+}
+
+export interface FilterMangaChapterPayload {
+  limit: number;
+  manga?: string;
+  contentRating?: string[];
+  includes?: string[];
+  order?: FilterOrders;
+  translatedLanguage?: string[];
+  chapter?: string[];
+  volume?: string[];
+  includeEmptyPages?: string;
 }
 
 export interface FilterMangaDetailResponse {
@@ -98,12 +110,37 @@ export interface FilterOrders {
   createdAt?: string;
   rating?: string;
   relevance?: string;
+  volume?: string;
+  chapter?: string;
+  followedCount?: string;
 }
 
-export interface BaseResponseData<T> {
+export interface TMangadexMangaChapterData {
+  id: string;
+  type: string;
+  attributes: TMangadexChapterAttribute;
+  relationships: MangaRelationships[];
+}
+
+export interface TMangadexChapterAttribute {
+  volume: string;
+  chapter: string;
+  title: string;
+  translatedLanguage: string;
+  externalUrl: any;
+  publishAt: string;
+  readableAt: string;
+  createdAt: string;
+  updatedAt: string;
+  pages: number;
+  version: number;
+}
+
+export interface MangadexBaseResponseData<T> {
   data: T;
   total?: number;
   limit?: number;
   offset?: number;
-  status: string;
+  status: any;
+  message?: any;
 }

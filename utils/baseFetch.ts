@@ -4,24 +4,37 @@ export async function BaseFetch<T>(
   url: string,
   cacheKey: string,
   cacheDurationSeconds = 60,
-  isRefresh = false
+  isRefresh = false,
+  method: "GET" | "POST" | "PUT" | "DELETE" = "GET",
+  body: any = null
 ): Promise<T | null> {
   try {
-    const cacheDuration = cacheDurationSeconds * 1000; // Convert seconds to milliseconds
+    const cacheDuration = cacheDurationSeconds * 1000;
     const now = Date.now();
 
-    // Skip cache if isRefresh is true
-    if (!isRefresh && cache.has(cacheKey)) {
+    // Skip cache if isRefresh is true or method is not GET
+    const isCacheable = method === "GET";
+
+    if (isCacheable && !isRefresh && cache.has(cacheKey)) {
       const cachedData = cache.get(cacheKey);
       if (cachedData && now - cachedData.timestamp < cacheDuration) {
         return cachedData.data as T;
       } else {
-        cache.delete(cacheKey); // Remove expired data
+        cache.delete(cacheKey);
       }
     }
 
-    // Fetch new data from API
-    const response = await fetch(url);
+    // Build fetch options
+    const fetchOptions: RequestInit = {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: body ? JSON.stringify(body) : undefined,
+    };
+
+    const response = await fetch(url, fetchOptions);
+
     if (!response.ok) {
       return {
         status: response.status,
@@ -33,8 +46,10 @@ export async function BaseFetch<T>(
     const data = await response.json();
     data.status = response.status;
 
-    // Store data in memory cache with timestamp
-    cache.set(cacheKey, { data, timestamp: now });
+    // Store data in memory cache if method is GET
+    if (isCacheable) {
+      cache.set(cacheKey, { data, timestamp: now });
+    }
 
     return data as T;
   } catch (error) {

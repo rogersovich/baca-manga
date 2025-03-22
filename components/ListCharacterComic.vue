@@ -88,7 +88,7 @@
           </div>
         </template>
       </div>
-      <div class="mt-6">
+      <div v-if="characters.length > 16" class="mt-6">
         <div class="w-full text-center my-2">
           <Button
             variant="secondary"

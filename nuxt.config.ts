@@ -10,6 +10,7 @@ export default defineNuxtConfig({
     public: {
       apiJikan: process.env.API_JIKAN_URL,
       apiKitsu: process.env.API_KITSU_URL,
+      apiMangadex: process.env.API_MANGADEX_URL,
     },
   },
 
