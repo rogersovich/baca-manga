@@ -42,7 +42,7 @@
                 </div>
               </div>
               <div class="absolute z-10 bottom-2 left-2">
-                <div class="text-[13px] truncate text-white font-bold">
+                <div class="text-[13px] line-clamp-1 text-white font-bold">
                   {{ char.character.name }}
                 </div>
               </div>
@@ -75,7 +75,7 @@
                 </div>
               </div>
               <div class="absolute z-10 bottom-2 left-2">
-                <div class="text-[13px] truncate text-white font-bold">
+                <div class="text-[13px] line-clamp-1 text-white font-bold">
                   {{ char.character.name }}
                 </div>
               </div>
@@ -113,7 +113,7 @@ import type { TMangaCharacter } from "~/types/jikanMangaCharacter.type";
 
 const props = defineProps<{
   isLoadingCharacter: boolean;
-  errorCharacter: string;
+  errorCharacter: Error | null;
   characters: TMangaCharacter[];
 }>();
 

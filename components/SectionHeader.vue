@@ -79,6 +79,7 @@ const comicStore = useComicStore();
 const inputRef = ref(null);
 const searchQuery = ref("");
 const searchIndex = ref<number | null>(null);
+const loading = useLoadingIndicator();
 
 const filters = reactive<TMangaFilterParams>({
   page: 1,
@@ -89,7 +90,7 @@ const filters = reactive<TMangaFilterParams>({
 
 watch(
   () => searchStore.mal_id,
-  (newVal) => {
+  async (newVal) => {
     if (newVal === 0) return;
 
     const selectedComic = res_mangaList.value?.data.find(
@@ -99,7 +100,9 @@ watch(
     const id = newVal;
     const url = `/${slug}/${id}`;
 
-    navigateTo(url);
+    loading.start();
+    await waitForSeconds(500);
+    await navigateTo(url);
     clearSearch();
     searchStore.setMalId(0);
   }
@@ -198,6 +201,8 @@ const goHome = () => {
 };
 
 const handleFetchRandomManga = async () => {
+  loading.start();
+
   await fetchRandomManga();
 
   comicStore.setRandomComic(true);

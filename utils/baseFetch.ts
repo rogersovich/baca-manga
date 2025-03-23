@@ -6,7 +6,8 @@ export async function BaseFetch<T>(
   cacheDurationSeconds = 60,
   isRefresh = false,
   method: "GET" | "POST" | "PUT" | "DELETE" = "GET",
-  body: any = null
+  body: any = null,
+  timeoutMs = 5000 // 5 seconds
 ): Promise<T | null> {
   try {
     const cacheDuration = cacheDurationSeconds * 1000;
@@ -24,6 +25,10 @@ export async function BaseFetch<T>(
       }
     }
 
+    // ✅ Setup AbortController for timeout
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
     // Build fetch options
     const fetchOptions: RequestInit = {
       method,
@@ -31,9 +36,11 @@ export async function BaseFetch<T>(
         "Content-Type": "application/json",
       },
       body: body ? JSON.stringify(body) : undefined,
+      signal: controller.signal,
     };
 
     const response = await fetch(url, fetchOptions);
+    clearTimeout(timeout);
 
     if (!response.ok) {
       return {
@@ -52,7 +59,15 @@ export async function BaseFetch<T>(
     }
 
     return data as T;
-  } catch (error) {
+  } catch (error: any) {
+    if (error.name === "AbortError") {
+      console.error(`Fetch to ${url} timed out`);
+      return {
+        status: 408, // HTTP 408 Request Timeout
+        message: "Request Timeout",
+        data: null,
+      } as T;
+    }
     return error as T;
   }
 }

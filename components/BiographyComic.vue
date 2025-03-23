@@ -182,7 +182,7 @@ import type { TMangaResponse } from "~/types/jikanManga.type";
 
 const props = defineProps<{
   isLoading: boolean;
-  error: string;
+  error: any;
   comic: TMangaResponse | null;
 }>();
 

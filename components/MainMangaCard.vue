@@ -75,6 +75,7 @@ const props = defineProps<{
 }>();
 
 const hoverState = ref(false);
+const loading = useLoadingIndicator();
 
 const setHover = (value: boolean) => {
   hoverState.value = value;
@@ -114,10 +115,15 @@ const getHoverBgClass = (status: any) => {
   }
 };
 
-const goToDetail = () => {
+const goToDetail = async () => {
   const slug = titleToSlug(props.manga.title);
   const id = props.manga.mal_id;
   const url = `/${slug}/${id}`;
-  navigateTo(url);
+
+  loading.start();
+
+  await waitForSeconds(500);
+
+  await navigateTo(url);
 };
 </script>
