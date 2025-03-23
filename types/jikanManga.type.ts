@@ -100,3 +100,10 @@ export interface TMangaFilterParams {
   q?: string;
   type?: "manga" | "manhwa" | "manhua";
 }
+
+export interface TMangaGenreResponse {
+  mal_id: number;
+  name: string;
+  url: string;
+  count: number;
+}

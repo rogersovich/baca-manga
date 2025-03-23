@@ -46,6 +46,7 @@
       </div>
       <div
         class="border border-gray-50/10 rounded-md p-[7px] cursor-pointer group hover:border-gray-50/20"
+        @click="goPageSearch"
       >
         <IconSearch
           class="size-5 text-muted-foreground group-hover:text-primary"
@@ -198,6 +199,10 @@ useEventListener("keydown", (event) => {
 
 const goHome = () => {
   navigateTo("/");
+};
+
+const goPageSearch = () => {
+  navigateTo("/search");
 };
 
 const handleFetchRandomManga = async () => {
