@@ -10,7 +10,7 @@ type ErrorResponse = any;
 
 export function useJikanManga() {
   const responses = ref<MangasReponse>();
-  const isLoading = ref(true);
+  const isLoading = ref(false);
   const error = ref<ErrorResponse>(null);
   const config = useRuntimeConfig();
 

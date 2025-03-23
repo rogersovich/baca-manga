@@ -5,7 +5,7 @@
         Top {{ filters.limit }} {{ getTitleType }}
       </h1>
     </div>
-    <template v-if="isLoading">
+    <template v-if="topComicPending">
       <div class="grid grid-rows-5 gap-3 my-4">
         <div v-for="i in 5" :key="i" class="row-span-1">
           <div class="flex flex-row space-x-3">
@@ -19,10 +19,10 @@
         </div>
       </div>
     </template>
-    <template v-if="!isLoading && !error">
+    <template v-if="!topComicPending && !topComicError">
       <div class="grid grid-rows-5 gap-2 mt-3">
         <div
-          v-for="manga in res_mangaList?.data"
+          v-for="manga in topComicData?.data"
           :key="manga.mal_id"
           class="row-span-1"
         >
@@ -30,7 +30,7 @@
         </div>
       </div>
     </template>
-    <div v-if="error">
+    <div v-if="topComicError">
       <div class="flex flex-col items-center mt-5">
         <div>
           <img
@@ -50,7 +50,7 @@
           size="sm"
           class="text-[12px] mt-2"
           :disabled="intervalError.status"
-          @click="fetchMangas(filters)"
+          @click="topComicRefresh()"
           >Try Again</Button
         >
       </div>
@@ -59,12 +59,18 @@
 </template>
 
 <script setup lang="ts">
-import type { TMangaFilterParams } from "~/types/jikanManga.type";
+import type { TBaseResponse } from "~/types/jikanBaseManga.type";
+import type {
+  TMangaFilterParams,
+  TMangaResponse,
+} from "~/types/jikanManga.type";
 
+type MangasReponse = TBaseResponse<TMangaResponse[]>;
 const props = defineProps<{
   type: "manga" | "manhwa" | "manhua";
 }>();
 
+const config = useRuntimeConfig();
 const intervalError = reactive({
   status: false,
   second: 3,
@@ -92,14 +98,20 @@ const getTitleType = computed(() => {
 });
 
 const {
-  fetchMangas,
-  responses: res_mangaList,
-  isLoading,
-  error,
-} = useJikanManga();
+  data: topComicData,
+  pending: topComicPending,
+  error: topComicError,
+  refresh: topComicRefresh,
+} = await useBaseFetch<MangasReponse>(
+  `${config.public.apiJikan}/manga`,
+  {
+    params: filters,
+  },
+  120000
+);
 
 const handleIntervalError = () => {
-  if (error.value) {
+  if (topComicError.value) {
     intervalError.status = true;
 
     const countdown = setInterval(() => {
@@ -115,14 +127,9 @@ const handleIntervalError = () => {
 };
 
 onMounted(async () => {
-  setTimeout(async () => {
-    await fetchMangas(filters);
-
-    if (error.value) {
-      intervalError.status = true;
-
-      handleIntervalError();
-    }
-  }, 2000);
+  if (topComicError.value) {
+    intervalError.status = true;
+    handleIntervalError();
+  }
 });
 </script>

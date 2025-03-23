@@ -1,10 +1,24 @@
 export function useBaseFetch<T>(
   url: string,
-  options: any = {},
-  staleTime = 60000 // 1 minute
+  options: {
+    method?: "GET" | "POST" | "PUT" | "DELETE";
+    headers?: Record<string, string>;
+    body?: any;
+    params?: Record<string, any>;
+  } = {},
+  staleTime = 60000, // 1 minute
+  server = true
 ) {
   const method = options.method || "GET";
-  const cacheKey = "baseFetch-" + url;
+
+  // ✅ Handle params and append as query string
+  let fullUrl = url;
+  if (options.params && method === "GET") {
+    const queryString = new URLSearchParams(options.params).toString();
+    fullUrl += (url.includes("?") ? "&" : "?") + queryString;
+  }
+
+  const cacheKey = "baseFetch-" + fullUrl;
   const cache = useState<Record<string, { data: T; timestamp: number }>>(
     "fetchCache",
     () => ({})
@@ -26,7 +40,7 @@ export function useBaseFetch<T>(
       }
 
       // Fetch new data
-      const data = await $fetch<T>(url, {
+      const data = await $fetch<T>(fullUrl, {
         ...options,
         method,
         headers: {
@@ -46,7 +60,7 @@ export function useBaseFetch<T>(
     {
       lazy: true,
       default: () => null,
-      server: method === "GET", // Disable SSR for POST, PUT, DELETE
+      server: server,
     }
   );
 }
