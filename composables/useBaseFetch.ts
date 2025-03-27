@@ -19,10 +19,9 @@ export function useBaseFetch<T>(
   }
 
   const cacheKey = "baseFetch-" + fullUrl;
-  const cache = useState<Record<string, { data: T; timestamp: number }>>(
-    "fetchCache",
-    () => ({})
-  );
+  const cache = useState<
+    Record<string, { data?: T; error?: any; timestamp: number }>
+  >("fetchCache", () => ({}));
 
   return useAsyncData<T>(
     cacheKey,
@@ -36,26 +35,36 @@ export function useBaseFetch<T>(
         cachedEntry &&
         now - cachedEntry.timestamp < staleTime
       ) {
-        return cachedEntry.data;
+        if (cachedEntry.error) {
+          throw cachedEntry.error;
+        }
+        return cachedEntry.data!;
       }
 
-      // Fetch new data
-      const data = await $fetch<T>(fullUrl, {
-        ...options,
-        method,
-        headers: {
-          // "X-Custom-Header": "MyDefaultHeader",
-          ...(options.headers || {}), // Menggabungkan dengan header dari pengguna
-        },
-        body: options.body || undefined,
-      });
+      try {
+        const data = await $fetch<T>(fullUrl, {
+          ...options,
+          method,
+          headers: {
+            ...(options.headers || {}),
+          },
+          body: options.body || undefined,
+        });
 
-      // Cache GET requests
-      if (method === "GET") {
-        cache.value[cacheKey] = { data, timestamp: now };
+        if (method === "GET") {
+          cache.value[cacheKey] = { data, timestamp: now };
+        }
+
+        return data;
+      } catch (error: any) {
+        if (method === "GET") {
+          // ✅ Only cache 429 or optionally all errors
+          if (error?.status === 429 || error?.response?.status === 429) {
+            cache.value[cacheKey] = { error, timestamp: now };
+          }
+        }
+        throw error;
       }
-
-      return data;
     },
     {
       lazy: true,
