@@ -47,24 +47,61 @@
           />
         </template>
       </div>
-      <div
-        class="border border-gray-50/10 rounded-md p-[7px] cursor-pointer group hover:border-gray-50/20"
-        @click="goPageSearch"
-      >
-        <IconSearch
-          class="size-5 text-muted-foreground group-hover:text-primary"
-        />
-      </div>
-      <div
-        class="border border-gray-50/10 rounded-md p-[7px] cursor-pointer group hover:border-gray-50/20"
-        @click="handleFetchRandomManga"
-      >
-        <IconArrowsShuffle
-          class="size-5 text-muted-foreground group-hover:text-primary"
-        />
-      </div>
+
+      <TooltipProvider :delay-duration="200">
+        <Tooltip>
+          <TooltipTrigger as-child>
+            <div
+              class="border border-gray-50/10 rounded-md p-[7px] cursor-pointer group hover:border-gray-50/20"
+              @click="goPageSearch"
+            >
+              <IconSearch
+                class="size-5 text-muted-foreground group-hover:text-primary"
+              />
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <div>Advance Search</div>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+
+      <TooltipProvider :delay-duration="200">
+        <Tooltip>
+          <TooltipTrigger as-child>
+            <div
+              class="border border-gray-50/10 rounded-md p-[7px] cursor-pointer group hover:border-gray-50/20"
+              @click="handleFetchRandomManga"
+            >
+              <IconArrowsShuffle
+                class="size-5 text-muted-foreground group-hover:text-primary"
+              />
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <div>Random Manga</div>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     </div>
-    <div class="actions">Login</div>
+    <div class="actions">
+      <TooltipProvider :delay-duration="200">
+        <Tooltip>
+          <TooltipTrigger as-child>
+            <div
+              class="border border-gray-50/10 rounded-md p-[7px] cursor-pointer group hover:border-gray-50/20"
+            >
+              <IconUserSquareRounded
+                class="size-6 text-muted-foreground group-hover:text-primary"
+              />
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <div>About Creator</div>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    </div>
   </header>
 </template>
 
@@ -74,6 +111,7 @@ import {
   IconSearch,
   IconArrowsShuffle,
   IconX,
+  IconUserSquareRounded,
 } from "@tabler/icons-vue";
 import { onClickOutside, useDebounce, useEventListener } from "@vueuse/core";
 import type { TMangaFilterParams } from "~/types/jikanManga.type";

@@ -39,10 +39,19 @@
           <span>Rank</span>
           <span>#{{ comic?.rank || "?" }}</span>
         </Button>
-        <Button size="sm" variant="outline" class="cursor-text">
-          <IconUsersGroup class="w-3 h-3" />
-          <span>{{ formatNumber(comic?.scored_by || 0) }}</span>
-        </Button>
+        <TooltipProvider :delay-duration="200">
+          <Tooltip>
+            <TooltipTrigger as-child>
+              <Button size="sm" variant="outline" class="cursor-text">
+                <IconUsersGroup class="w-3 h-3" />
+                <span>{{ formatNumber(comic?.scored_by || 0) }}</span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <div>Scored by</div>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
     </template>
 
