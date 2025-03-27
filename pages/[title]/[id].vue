@@ -1,12 +1,10 @@
 <template>
   <div class="grid grid-cols-12 justify-center gap-4">
     <div class="col-start-4 col-span-6">
-      <NuxtLink to="/">
-        <Button size="sm" variant="ghost">
-          <IconArrowLeft class="w-3 h-3" />
-          <span>Back</span>
-        </Button>
-      </NuxtLink>
+      <Button size="sm" variant="ghost" @click="goBack()">
+        <IconArrowLeft class="w-3 h-3" />
+        <span>Back</span>
+      </Button>
     </div>
     <div class="col-start-4 col-span-6 border border-gray-50/10 rounded-md">
       <div class="relative">
@@ -266,6 +264,15 @@ const getAuthorJikan = () => {
 };
 
 const mangadexComicId = ref("");
+
+const goBack = () => {
+  if (comicStore.is_page_search) {
+    comicStore.setPageSearch(false);
+    navigateTo("/search");
+  } else {
+    navigateTo("/");
+  }
+};
 
 const handleMatchMangadex = () => {
   const authorJikan = getAuthorJikan();

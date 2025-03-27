@@ -10,7 +10,10 @@
       />
     </div>
     <div ref="inputRef" class="flex items-center gap-2">
-      <div class="relative w-full max-w-sm items-center group">
+      <div
+        v-if="route.path != '/search'"
+        class="relative w-full max-w-sm items-center group"
+      >
         <Input
           id="search"
           v-model="searchQuery"
@@ -81,6 +84,7 @@ const inputRef = ref(null);
 const searchQuery = ref("");
 const searchIndex = ref<number | null>(null);
 const loading = useLoadingIndicator();
+const route = useRoute();
 
 const filters = reactive<TMangaFilterParams>({
   page: 1,
@@ -149,7 +153,6 @@ watch(debouncedQuery, async (newValue) => {
     filters.q = "";
 
     searchStore.setOpenBar(false);
-    await fetchMangas(filters);
   }
 });
 

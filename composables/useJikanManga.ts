@@ -31,9 +31,33 @@ export function useJikanManga() {
       queryParams.append("q", filter.q);
     }
 
-    // Add q only if provided
     if (filter.type) {
       queryParams.append("type", filter.type);
+    }
+
+    if (filter.status) {
+      queryParams.append("status", filter.status);
+    }
+
+    if (filter.min_score) {
+      queryParams.append("min_score", filter.min_score);
+    }
+
+    if (filter.max_score) {
+      queryParams.append("max_score", filter.max_score);
+    }
+
+    if (filter.start_date) {
+      queryParams.append("start_date", filter.start_date);
+    }
+
+    if (filter.end_date) {
+      queryParams.append("end_date", filter.end_date);
+    }
+
+    if (filter.genres) {
+      const genresValue = filter.genres.join(",");
+      queryParams.append("genres", genresValue);
     }
 
     const stringParams = queryParams.toString();
@@ -47,10 +71,15 @@ export function useJikanManga() {
     if (status < 300 && data) {
       error.value = null;
       responses.value = data;
+      isLoading.value = false;
+
+      return data.data;
     } else {
       error.value = data?.message;
+      isLoading.value = false;
+
+      return [];
     }
-    isLoading.value = false;
   };
 
   return { responses, isLoading, error, fetchMangas };

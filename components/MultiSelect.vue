@@ -10,10 +10,10 @@
         <div class="flex flex-wrap items-center gap-2">
           <div
             v-for="option in localValue"
-            :key="option"
+            :key="option.value"
             class="bg-accent px-2 py-1 rounded text-[13px]"
           >
-            {{ option }}
+            {{ option.label }}
           </div>
         </div>
       </template>
@@ -64,7 +64,7 @@ import { IconCheck, IconChevronDown } from "@tabler/icons-vue";
 
 const props = defineProps<{
   modelValue: string[];
-  options: { label: string; value: string }[];
+  options: { label: string; value: any }[];
   placeholder?: string;
   disabled?: boolean;
 }>();
@@ -80,24 +80,36 @@ const onUpdateOpen = (open: boolean) => {
   }
 };
 
-const localValue = ref([...props.modelValue]);
+const localValue = ref<{ label: string; value: any }[]>([
+  ...props.modelValue.map((v) => {
+    const opt = props.options.find((o) => o.value === v);
+    return opt
+      ? { value: opt.value, label: opt.label }
+      : { value: v, label: v };
+  }),
+]);
 
-const toggleSelection = (val: string) => {
-  const selected = props.options.find((opt) => opt.value === val);
-  const labelValue = selected?.label || "";
+const toggleSelection = (val: any) => {
+  const selected = props.options.find((opt) => opt.value == val);
+  if (!selected) return;
 
-  if (localValue.value.includes(labelValue)) {
-    localValue.value = localValue.value.filter((v) => v !== labelValue);
+  const index = localValue.value.findIndex((v) => v.value === selected.value);
+
+  if (index > -1) {
+    localValue.value.splice(index, 1);
   } else {
-    localValue.value.push(labelValue);
+    localValue.value.push({ value: selected.value, label: selected.label });
   }
 
-  emit("update:modelValue", localValue.value);
+  emit(
+    "update:modelValue",
+    localValue.value.map((v) => v.value)
+  );
 };
 
 const isItemSelected = computed(() => {
-  return (selected: string[], item: string) => {
-    return selected.map((val) => val.trim()).includes(item);
+  return (selected: { label: string; value: any }[], itemLabel: string) => {
+    return selected.some((val) => val.label.trim() === itemLabel);
   };
 });
 </script>

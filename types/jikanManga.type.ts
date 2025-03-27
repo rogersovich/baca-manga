@@ -92,13 +92,34 @@ export interface TMangaResponse {
   demographics: TMangaDemographic[];
 }
 
+export type TFilterType =
+  | "manga"
+  | "manhwa"
+  | "manhua"
+  | "novel"
+  | "lightnovel"
+  | "oneshot";
+export type TFilterStatus =
+  | "publishing"
+  | "complete"
+  | "hiatus"
+  | "discontinued"
+  | "upcoming"
+  | "doujin";
+
 export interface TMangaFilterParams {
   page: number;
   limit: number;
   order_by: string;
   sort: "desc" | "asc";
   q?: string;
-  type?: "manga" | "manhwa" | "manhua";
+  type?: TFilterType;
+  start_date?: string;
+  end_date?: string;
+  genres?: number[];
+  status?: TFilterStatus;
+  min_score?: any;
+  max_score?: any;
 }
 
 export interface TMangaGenreResponse {

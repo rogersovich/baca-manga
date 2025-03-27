@@ -76,6 +76,8 @@ const props = defineProps<{
 
 const hoverState = ref(false);
 const loading = useLoadingIndicator();
+const route = useRoute();
+const comicStore = useComicStore();
 
 const setHover = (value: boolean) => {
   hoverState.value = value;
@@ -123,6 +125,10 @@ const goToDetail = async () => {
   loading.start();
 
   await waitForSeconds(500);
+
+  if (route.path == "/search") {
+    comicStore.setPageSearch(true);
+  }
 
   await navigateTo(url);
 };
