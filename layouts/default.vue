@@ -1,7 +1,7 @@
 <template>
   <div>
     <SectionHeader />
-    <div class="min-h-screen pt-[92px] px-[24px]">
+    <div class="min-h-screen pt-[128px] md:pt-[92px] px-[24px]">
       <slot />
     </div>
     <SectionFooter />

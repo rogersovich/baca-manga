@@ -12,7 +12,7 @@
     <div class="col-span-3 relative">
       <img
         :src="manga.images.webp.image_url"
-        class="rounded-md w-full h-[100px] xl:h-[125px] 2xl:h-[150px] object-cover"
+        class="rounded-md w-full h-[130px] sm:h-[170px] md:h-[120px] xl:h-[125px] 2xl:h-[150px] object-cover"
         @error="handleImageError"
       />
       <div v-if="hoverState" class="container-eye-card">

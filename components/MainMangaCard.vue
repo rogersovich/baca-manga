@@ -12,7 +12,7 @@
       <NuxtImg
         :src="manga.images.webp.image_url"
         :alt="manga.title"
-        class="rounded-md h-[200px] 2xl:h-[275px] w-full object-cover"
+        class="rounded-md h-[230px] sm:h-[275px] md:h-[200px] lg:h-[230px] 2xl:h-[275px] w-full object-cover"
         placeholder="/images/fallback-image.png"
       />
 

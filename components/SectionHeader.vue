@@ -1,25 +1,28 @@
 <template>
   <header
-    class="flex items-center z-50 justify-between px-8 py-4 bg-gray-950 border-b border-gray-50/10 text-white w-full fixed"
+    class="flex flex-col md:flex-row items-center z-50 justify-between px-8 py-4 bg-gray-950 border-b border-gray-50/10 text-white w-full fixed"
   >
-    <div class="logo">
+    <div class="logo hidden md:block">
       <img
         src="/images/logo.png"
         class="h-10 w-10 cursor-pointer"
         @click="goHome"
       />
     </div>
-    <div ref="inputRef" class="flex items-center gap-2">
+    <div
+      ref="inputRef"
+      class="flex w-full md:w-auto flex-col md:flex-row items-center gap-3"
+    >
       <div
         v-if="route.path != '/search'"
-        class="relative w-full max-w-sm items-center group"
+        class="relative w-full md:max-w-sm items-center group"
       >
         <Input
           id="search"
           v-model="searchQuery"
           type="text"
           placeholder="Search..."
-          class="pr-10 w-[350px] group-hover:border-gray-50/20"
+          class="pr-10 w-full md:w-[350px] group-hover:border-gray-50/20"
           :class="{ 'pr-14': searchQuery }"
           autocomplete="off"
           @focus="handleFocus"
@@ -52,7 +55,7 @@
         <Tooltip>
           <TooltipTrigger as-child>
             <div
-              class="border border-gray-50/10 rounded-md p-[7px] cursor-pointer group hover:border-gray-50/20"
+              class="hidden md:block border border-gray-50/10 rounded-md p-[7px] cursor-pointer group hover:border-gray-50/20"
               @click="goPageSearch"
             >
               <IconSearch
@@ -70,7 +73,7 @@
         <Tooltip>
           <TooltipTrigger as-child>
             <div
-              class="border border-gray-50/10 rounded-md p-[7px] cursor-pointer group hover:border-gray-50/20"
+              class="hidden md:block border border-gray-50/10 rounded-md p-[7px] cursor-pointer group hover:border-gray-50/20"
               @click="handleFetchRandomManga"
             >
               <IconArrowsShuffle
@@ -83,8 +86,34 @@
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
+
+      <div class="md:hidden flex items-center gap-3">
+        <div
+          class="flex items-center gap-3 border border-gray-50/10 px-4 rounded-md p-[7px] cursor-pointer"
+          @click="goPageSearch"
+        >
+          <IconSearch class="size-4 text-muted-foreground" />
+
+          <span class="text-xs text-muted-foreground">Advance </span>
+        </div>
+        <div
+          class="flex items-center gap-3 border border-gray-50/10 px-4 rounded-md p-[7px] cursor-pointer"
+          @click="handleFetchRandomManga"
+        >
+          <IconArrowsShuffle class="size-4 text-muted-foreground" />
+
+          <span class="text-xs text-muted-foreground">Random</span>
+        </div>
+        <div
+          class="flex items-center gap-3 border border-gray-50/10 px-4 rounded-md p-[7px] cursor-pointer"
+        >
+          <IconUserSquareRounded class="size-4 text-muted-foreground" />
+
+          <span class="text-xs text-muted-foreground">Creator</span>
+        </div>
+      </div>
     </div>
-    <div class="actions">
+    <div class="actions hidden md:block">
       <TooltipProvider :delay-duration="200">
         <Tooltip>
           <TooltipTrigger as-child>

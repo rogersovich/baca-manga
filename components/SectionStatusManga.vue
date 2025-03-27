@@ -1,8 +1,12 @@
 <template>
   <section id="main-manga" class="mt-6">
-    <div class="text-white text-2xl font-bold">Maybe Relevant</div>
+    <div class="text-white text-2xl font-bold text-center sm:text-left">
+      Maybe Relevant
+    </div>
 
-    <div class="flex justify-between my-4">
+    <div
+      class="flex flex-col sm:flex-row items-center sm:justify-between sm:my-4 my-6 gap-4"
+    >
       <div class="flex gap-2">
         <Button
           :variant="badgeFilter == 'manga' ? 'default' : 'outline'"
@@ -52,7 +56,7 @@
       </div>
     </div>
     <div
-      class="grid grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-6 gap-6"
+      class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-6 gap-6"
     >
       <template v-if="isLoading">
         <div v-for="i in 12" :key="i" class="col-span-1">

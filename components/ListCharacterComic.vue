@@ -17,7 +17,9 @@
     <div v-else-if="errorCharacter">Error {{ errorCharacter }}"></div>
     <template v-else-if="!isLoadingCharacter && !errorCharacter">
       <template v-if="characters.length > 0">
-        <div class="grid grid-cols-4 gap-4 max-h-[600px] overflow-y-auto">
+        <div
+          class="grid grid-cols-2 sm:grid-cols-4 gap-4 max-h-[600px] overflow-y-auto"
+        >
           <template v-if="lessCharacters.length > 0">
             <div
               v-for="char in lessCharacters"

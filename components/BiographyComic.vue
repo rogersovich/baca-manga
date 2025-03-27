@@ -4,13 +4,13 @@
       <Skeleton class="h-[40px] w-[75%] rounded" />
     </template>
     <template v-else>
-      <div class="font-semibold text-3xl text-white">
+      <div class="font-semibold text-xl sm:text-3xl text-white">
         {{ comic?.title }}
       </div>
     </template>
 
     <template v-if="isLoading">
-      <div class="flex flex-row space-x-3 items-center">
+      <div class="flex flex-wrap sm:flex-row space-x-3 items-center">
         <Skeleton class="h-[30px] w-[110px] rounded" />
         <Skeleton class="h-[30px] w-[90px] rounded" />
         <Skeleton class="h-[30px] w-[80px] rounded" />
@@ -18,7 +18,7 @@
       </div>
     </template>
     <template v-else>
-      <div class="flex items-center gap-2">
+      <div class="flex flex-wrap sm:flex-row items-center gap-2">
         <Button
           size="sm"
           variant="outline"
@@ -56,7 +56,7 @@
     </template>
 
     <div class="grid grid-cols-13 gap-6">
-      <div class="col-span-4">
+      <div class="col-start-3 col-span-8 sm:col-start-1 sm:col-span-4">
         <template v-if="isLoading">
           <Skeleton class="h-[250px] w-full rounded" />
         </template>
@@ -65,12 +65,12 @@
             v-if="comic?.images.webp.image_url"
             :src="comic?.images.webp.image_url"
             :alt="comic.title"
-            class="w-full object-cover"
+            class="w-full h-[300px] sm:h-auto object-cover"
             placeholder="/images/fallback-image.png"
           />
         </template>
       </div>
-      <div class="col-span-9">
+      <div class="col-span-12 sm:col-span-9">
         <template v-if="isLoading">
           <div class="flex flex-col gap-3">
             <Skeleton class="h-[20px] w-[60%] rounded" />

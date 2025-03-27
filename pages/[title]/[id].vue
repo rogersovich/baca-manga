@@ -1,21 +1,25 @@
 <template>
   <div class="grid grid-cols-12 justify-center gap-4">
-    <div class="col-start-4 col-span-6">
+    <div
+      class="col-span-12 md:col-start-3 md:col-span-8 lg:col-start-3 lg:col-span-8 xl:col-start-4 xl:col-span-6"
+    >
       <Button size="sm" variant="ghost" @click="goBack()">
         <IconArrowLeft class="w-3 h-3" />
         <span>Back</span>
       </Button>
     </div>
-    <div class="col-start-4 col-span-6 border border-gray-50/10 rounded-md">
+    <div
+      class="col-span-12 md:col-start-3 md:col-span-8 lg:col-start-3 lg:col-span-8 xl:col-start-4 xl:col-span-6 border border-gray-50/10 rounded-md"
+    >
       <div class="relative">
         <template v-if="comicPending || (isLoadingKitsu && !coverImg)">
-          <Skeleton class="h-[250px] w-full rounded" />
+          <Skeleton class="h-[150px] md:h-[300px] w-full rounded" />
         </template>
         <template v-else>
           <NuxtImg
             :src="coverImg"
             :alt="comicData?.data.title"
-            class="h-[300px] w-full object-cover object-center rounded-t-md"
+            class="h-[150px] md:h-[300px] w-full object-cover object-center rounded-t-md"
             placeholder="/images/fallback-image.png"
           />
           <div class="absolute bottom-0 inset-0 back-drop-cuk"></div>

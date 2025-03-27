@@ -1,5 +1,5 @@
 <template>
-  <div class="p-4 rounded-md">
+  <div class="lg:p-4 rounded-md">
     <div>
       <h1 class="text-white text-lg font-bold">
         Top {{ filters.limit }} {{ getTitleType }}
@@ -9,7 +9,9 @@
       <div class="grid grid-rows-5 gap-3 my-4">
         <div v-for="i in 5" :key="i" class="row-span-1">
           <div class="flex flex-row space-x-3">
-            <Skeleton class="h-[110px] w-[30%] rounded-xl" />
+            <Skeleton
+              class="h-[130px] sm:h-[170px] md:h-[120px] xl:h-[125px] 2xl:h-[150px] w-[30%] rounded-xl"
+            />
             <div class="space-y-2 w-full flex flex-col justify-center">
               <Skeleton class="h-3 w-[85%]" />
               <Skeleton class="h-3 w-[70%]" />
@@ -59,18 +61,12 @@
 </template>
 
 <script setup lang="ts">
-import type { TBaseResponse } from "~/types/jikanBaseManga.type";
-import type {
-  TMangaFilterParams,
-  TMangaResponse,
-} from "~/types/jikanManga.type";
+import type { TMangaFilterParams } from "~/types/jikanManga.type";
 
-type MangasReponse = TBaseResponse<TMangaResponse[]>;
 const props = defineProps<{
   type: "manga" | "manhwa" | "manhua";
 }>();
 
-const config = useRuntimeConfig();
 const intervalError = reactive({
   status: false,
   second: 3,
@@ -98,17 +94,16 @@ const getTitleType = computed(() => {
 });
 
 const {
-  data: topComicData,
-  pending: topComicPending,
+  fetchMangas,
+  responses: topComicData,
+  isLoading: topComicPending,
   error: topComicError,
-  refresh: topComicRefresh,
-} = await useBaseFetch<MangasReponse>(
-  `${config.public.apiJikan}/manga`,
-  {
-    params: filters,
-  },
-  120000
-);
+} = useJikanManga();
+
+const topComicRefresh = () => {
+  fetchMangas(filters, true);
+  handleIntervalError();
+};
 
 const handleIntervalError = () => {
   if (topComicError.value) {
@@ -127,9 +122,8 @@ const handleIntervalError = () => {
 };
 
 onMounted(async () => {
-  if (topComicError.value) {
-    intervalError.status = true;
-    handleIntervalError();
-  }
+  await fetchMangas(filters);
+
+  handleIntervalError();
 });
 </script>
