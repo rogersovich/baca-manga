@@ -1,6 +1,8 @@
 <template>
   <div class="grid grid-cols-12 justify-center gap-4">
-    <div class="col-start-3 col-span-8">
+    <div
+      class="col-span-12 sm:col-span-12 md:col-start-2 md:col-span-10 lg:col-start-3 lg:col-span-8"
+    >
       <div class="grid grid-cols-12 gap-x-3 gap-y-4">
         <div class="col-span-12">
           <div class="mb-2 font-bold tracking-wide px-1">Search Title</div>
@@ -29,7 +31,7 @@
             </span>
           </div>
         </div>
-        <div class="col-span-3">
+        <div class="col-span-6 sm:col-span-4">
           <div class="mb-2 font-bold tracking-wide px-1">Type</div>
           <div class="flex items-center gap-2">
             <div
@@ -68,7 +70,7 @@
             </div>
           </div>
         </div>
-        <div class="col-span-3">
+        <div class="col-span-6 sm:col-span-4">
           <div class="mb-2 font-bold tracking-wide px-1">Status</div>
           <div class="flex items-center gap-2">
             <div
@@ -107,7 +109,7 @@
             </div>
           </div>
         </div>
-        <div class="col-span-3">
+        <div class="col-span-6 sm:col-span-4">
           <div class="mb-2 font-bold tracking-wide px-1">Genres</div>
           <MultiSelect
             v-model="filters.genre"
@@ -116,7 +118,7 @@
             placeholder="Select Genres"
           />
         </div>
-        <div v-if="isExpanded" class="col-span-3">
+        <div v-if="isExpanded" class="col-span-6 sm:col-span-4">
           <div class="mb-2 font-bold tracking-wide px-1">Sorting</div>
           <div class="flex items-center gap-2">
             <div class="basis-[100%]">
@@ -144,7 +146,7 @@
             </div>
           </div>
         </div>
-        <div v-if="isExpanded" class="col-span-4">
+        <div v-if="isExpanded" class="col-span-12 sm:col-span-8">
           <div class="grid grid-cols-2 gap-3">
             <div class="col-span-1">
               <div class="mb-2 font-bold tracking-wide px-1">Min Score</div>
@@ -188,7 +190,7 @@
             </div>
           </div>
         </div>
-        <div v-if="isExpanded" class="col-span-5">
+        <div v-if="isExpanded" class="col-span-12 sm:col-span-8">
           <div class="grid grid-cols-2 gap-3">
             <div class="col-span-1">
               <div class="mb-2 font-bold tracking-wide px-1">Start Date</div>
@@ -246,7 +248,9 @@
             </div>
           </div>
         </div>
-        <div class="col-span-3 flex items-end justify-center gap-6">
+        <div
+          class="col-span-6 sm:col-span-4 flex items-end sm:justify-between md:justify-start sm:gap-4 gap-2"
+        >
           <div class="flex items-center flex-col">
             <div class="mb-2 text-xs tracking-wide">Apply</div>
             <Button
@@ -275,10 +279,9 @@
             </Button>
           </div>
         </div>
-        <div class="col-span-1 flex items-center flex-col"></div>
       </div>
       <div
-        class="grid grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-6 gap-6 mt-4"
+        class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-6 gap-6 mt-6 sm:mt-4"
       >
         <template v-if="isLoading">
           <div v-for="i in 12" :key="i" class="col-span-1">

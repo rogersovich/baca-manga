@@ -1,6 +1,8 @@
 <template>
   <section id="main-manga">
-    <div class="text-white text-2xl font-bold text-center sm:text-left">
+    <div
+      class="text-white text-4xl md:text-2xl font-bold text-center sm:text-left"
+    >
       For You
     </div>
 

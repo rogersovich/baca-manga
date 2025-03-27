@@ -2,7 +2,7 @@
   <header
     class="flex flex-col md:flex-row items-center z-50 justify-between px-8 py-4 bg-gray-950 border-b border-gray-50/10 text-white w-full fixed"
   >
-    <div class="logo hidden md:block">
+    <div class="logo mb-4 md:mb-0">
       <img
         src="/images/logo.png"
         class="h-10 w-10 cursor-pointer"
