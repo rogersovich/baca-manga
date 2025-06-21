@@ -5,7 +5,7 @@
         <SectionMainManga />
         <SectionStatusManga />
       </div>
-      <div
+      <!-- <div
         id="top-content"
         class="hidden lg:block xl:block lg:col-span-5 xl:col-span-4"
       >
@@ -17,7 +17,7 @@
       </div>
       <div id="top-content" class="block lg:hidden col-span-12 md:col-span-6">
         <TopComicByType type="manhwa" />
-      </div>
+      </div> -->
     </section>
   </div>
 </template>

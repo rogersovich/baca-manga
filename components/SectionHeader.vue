@@ -2,12 +2,12 @@
   <header
     class="flex flex-col md:flex-row items-center z-50 justify-between px-8 py-4 bg-gray-950 border-b border-gray-50/10 text-white w-full fixed"
   >
-    <div class="logo mb-4 md:mb-0">
-      <img
-        src="/images/logo.png"
-        class="h-10 w-10 cursor-pointer"
-        @click="goHome"
-      />
+    <div
+      class="logo mb-4 md:mb-0 flex items-center gap-2 cursor-pointer"
+      @click="goHome"
+    >
+      <img src="/images/logo.png" class="h-10 w-10" />
+      <div class="font-bold text-xl">Baca Manga</div>
     </div>
     <div
       ref="inputRef"

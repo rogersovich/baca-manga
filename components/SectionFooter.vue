@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full block py-8 px-4 md:px-8">
+  <div class="w-full block pt-8 pb-8 md:pb-16 md:pt-20 px-4 md:px-8">
     <div
       class="text-white/50 grid grid-cols-12 gap-y-12 md:gap-12 md:gap-y-0 items-center"
     >
