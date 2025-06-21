@@ -11,14 +11,23 @@
           website to stay connected.
         </div>
         <div class="flex items-center gap-3">
-          <div class="border border-gray-50/30 p-2 rounded-md">
-            <IconBrandGithubFilled class="size-5" />
+          <div
+            class="border border-gray-50/30 p-2 rounded-md cursor-pointer group"
+            @click="goToSocialMedia('github')"
+          >
+            <IconBrandGithubFilled class="size-5 group-hover:text-blue-600" />
           </div>
-          <div class="border border-gray-50/30 p-2 rounded-md">
-            <IconBrandLinkedinFilled class="size-5" />
+          <div
+            class="border border-gray-50/30 p-2 rounded-md cursor-pointer group"
+            @click="goToSocialMedia('linkedin')"
+          >
+            <IconBrandLinkedinFilled class="size-5 group-hover:text-blue-600" />
           </div>
-          <div class="border border-gray-50/30 p-2 rounded-md">
-            <IconWorld class="size-5" />
+          <div
+            class="border border-gray-50/30 p-2 rounded-md cursor-pointer group"
+            @click="goToSocialMedia('website')"
+          >
+            <IconWorld class="size-5 group-hover:text-blue-600" />
           </div>
         </div>
       </div>
@@ -77,7 +86,14 @@
             if you want any tweaks! 😊
           </div>
         </div>
-        <Input placeholder="you@email.com" class="h-11" />
+        <div>
+          <a
+            class="text-sm underline text-blue-500"
+            href="mailto:dimasroger89@gmail.com"
+          >
+            dimasroger89@gmail.com
+          </a>
+        </div>
       </div>
     </div>
   </div>
@@ -93,5 +109,15 @@ import {
 
 const getYear = () => {
   return new Date().getFullYear();
+};
+
+const goToSocialMedia = (type: string) => {
+  if (type == "github") {
+    window.open("https://github.com/rogersovich", "_blank");
+  } else if (type == "linkedin") {
+    window.open("https://www.linkedin.com/in/dimasrogerw/", "_blank");
+  } else {
+    window.open("https://www.dimasroger.com", "_blank");
+  }
 };
 </script>

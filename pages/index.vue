@@ -5,19 +5,30 @@
         <SectionMainManga />
         <SectionStatusManga />
       </div>
-      <!-- <div
-        id="top-content"
-        class="hidden lg:block xl:block lg:col-span-5 xl:col-span-4"
-      >
-        <TopComicByType type="manga" />
-        <TopComicByType type="manhwa" />
-      </div>
-      <div id="top-content" class="block lg:hidden col-span-12 md:col-span-6">
-        <TopComicByType type="manga" />
-      </div>
-      <div id="top-content" class="block lg:hidden col-span-12 md:col-span-6">
-        <TopComicByType type="manhwa" />
-      </div> -->
+      <ClientOnly>
+        <div
+          v-if="!isMobile"
+          id="top-content"
+          class="hidden lg:block xl:block lg:col-span-5 xl:col-span-4"
+        >
+          <TopComicByType type="manga" />
+          <TopComicByType type="manhwa" />
+        </div>
+        <div
+          v-if="isMobile"
+          id="top-content"
+          class="block lg:hidden col-span-12 md:col-span-6"
+        >
+          <TopComicByType type="manga" />
+        </div>
+        <div
+          v-if="isMobile"
+          id="top-content"
+          class="block lg:hidden col-span-12 md:col-span-6"
+        >
+          <TopComicByType type="manhwa" />
+        </div>
+      </ClientOnly>
     </section>
   </div>
 </template>
