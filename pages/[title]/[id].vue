@@ -240,22 +240,6 @@ const coverImg = computed(() => {
   return image;
 });
 
-// const uniqueChapters = computed(() => {
-//   const seen = new Set();
-//   return mangadexChapters.value?.data
-//     .filter((item) => {
-//       const chapterNum = item.attributes.chapter;
-//       if (!chapterNum || seen.has(chapterNum)) return false;
-//       seen.add(chapterNum);
-//       return true;
-//     })
-//     .sort(
-//       (a, b) =>
-//         parseFloat(a.attributes.chapter) - parseFloat(b.attributes.chapter)
-//     )
-//     .slice(0, 5);
-// });
-
 const getAuthorJikan = () => {
   const authorName =
     comicData.value?.data.authors
@@ -340,7 +324,7 @@ onMounted(async () => {
     limit: 5,
     offset: 0,
     title: title,
-    contentRating: ["safe", "suggestive", "erotica"],
+    contentRating: ["safe"],
     order: {
       relevance: "desc",
       followedCount: "desc",
@@ -357,7 +341,7 @@ onMounted(async () => {
     await fetchChapterMangadex({
       limit: totalChapter,
       manga: mangadexComicId.value,
-      contentRating: ["safe", "suggestive", "erotica"],
+      contentRating: ["safe"],
       translatedLanguage: ["en"],
       includes: ["scanlation_group"],
       chapter: arrChapter,

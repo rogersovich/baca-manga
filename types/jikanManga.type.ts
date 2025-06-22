@@ -120,6 +120,7 @@ export interface TMangaFilterParams {
   status?: TFilterStatus;
   min_score?: any;
   max_score?: any;
+  sfw?: boolean;
 }
 
 export interface TMangaGenreResponse {

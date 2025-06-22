@@ -127,6 +127,7 @@ const filters = reactive<TMangaFilterParams>({
   order_by: "score",
   sort: "desc",
   type: badgeFilter.value,
+  sfw: false,
 });
 
 const pagination = reactive({

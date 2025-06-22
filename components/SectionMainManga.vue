@@ -127,6 +127,7 @@ const filters = reactive<TMangaFilterParams>({
   limit: 12,
   order_by: "score",
   sort: "desc",
+  sfw: false,
 });
 
 const pagination = reactive({

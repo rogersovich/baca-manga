@@ -78,6 +78,7 @@ const filters = reactive<TMangaFilterParams>({
   order_by: "score",
   sort: "desc",
   type: props.type,
+  sfw: false,
 });
 
 const getTitleType = computed(() => {

@@ -1,0 +1,12 @@
+services:
+  nuxt:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: baca-manga:latest
+    container_name: cont-baca-manga
+    env_file:
+      - .env
+    ports:
+      - "3001:3001" # host:container
+    restart: unless-stopped

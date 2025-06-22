@@ -541,6 +541,7 @@ const onApplyFilters = async (isScrolling = false) => {
     start_date,
     end_date,
     genres: filters.genre,
+    sfw: false,
   } as TMangaFilterParams;
 
   const data = await fetchMangas(payloadFilter);
